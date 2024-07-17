@@ -1,0 +1,25 @@
+library(tidyverse)
+
+# You can always conjure data viewer back into existence.
+# view(tvshows)
+
+# This command will print out the first six of a data set in the console.
+# head(tvshows)
+
+# If you want to know the size of your data set
+# as well as the names of the variables, use the str command.
+# str(tvshows)
+
+# Loading data file.
+tvshows = read.csv('data/raw data/tvshows.csv', header = TRUE)
+
+# make tables of counts with xtabs.
+xtabs(~Genre + Duration, data = tvshows)
+
+# use the pipe operator (%>%) as a way of chaining together computations.
+tvshows %>%
+  group_by(Genre) %>%
+  summarize(mean_GRP = mean(GRP))
+
+ggplot(tvshows) +
+  geom_point(aes(x = GRP, y = PE, color = Genre))
