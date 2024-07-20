@@ -1,0 +1,267 @@
+---
+title: "Homework-1"
+author: "Tianyi Ma"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document: default
+  html_document:
+  df_print: paged
+---
+
+```{r set up, echo=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+```
+
+# Problem 1: playlists revisited
+
+## Part A
+
+```{r 1a, echo=FALSE}
+library(tidyverse)
+library(dplyr)
+library(knitr)
+plays_top50 <- read.csv("~/Downloads/plays_top50.csv")
+head(plays_top50)
+
+
+xtabs(~ daft.punk + david.bowie, data=plays_top50)%>%
+  prop.table(margin = 2)%>%
+round(3)
+
+```
+
+##Part B
+
+```{r 1b,echo=FALSE}
+
+
+
+
+
+
+
+```
+
+#Problem 2: Super Bowl ads \## Part A
+
+```{r 2a, echo=FALSE, results='asis'}
+library(tidyverse)
+superbowl <- read.csv("~/Downloads/superbowl.csv")
+
+xtabs(~danger, data=superbowl)
+t1 = xtabs(~danger, data=superbowl)
+prop.table(t1)
+
+
+head(superbowl)
+xtabs(~danger + funny, data=superbowl) %>%
+prop.table(margin=2)%>%
+round(2)
+```
+
+##Part B
+
+```{r 2b, echo=FALSE}
+library(tidyverse)
+superbowl <- read.csv("~/Downloads/superbowl.csv")
+
+head(superbowl)
+xtabs(~animals + use_sex, data=superbowl) %>%
+   prop.table(margin = 2) %>%
+  round(2)
+
+```
+
+##Part C
+
+```{r 2c, echo=FALSE}
+library(tidyverse)
+superbowl <- read.csv("~/Downloads/superbowl.csv")
+
+head(superbowl)
+xtabs(~celebrity + patriotic, data=superbowl) %>%
+  prop.table(margin=2)%>%
+round(2)
+```
+
+#Problem 3 \## Part A
+
+```{r 3a, echo=FALSE}
+profs <- read.csv("~/Downloads/profs.csv")
+ggplot(profs) +
+  geom_histogram(aes(x=eval))
+               
+```
+
+```{r 3b, echo=FALSE}
+profs <- read.csv("~/Downloads/profs.csv")
+ggplot(profs) +
+  geom_boxplot(aes(x = native, y = eval))
+               
+```
+
+```{r 3c, echo=FALSE}
+profs <- read.csv("~/Downloads/profs.csv")
+ggplot(profs) +
+  geom_histogram(aes(x=eval))+
+  facet_wrap(~gender)
+               
+```
+
+```{r 3d, echo=FALSE}
+profs <- read.csv("~/Downloads/profs.csv")
+ggplot(profs) +
+  geom_point(aes(x=beauty, y=eval))
+               
+```
+
+# Problem 4: SAT scores for UT students
+
+```{r 4a, echo=FALSE}
+utsat <- read.csv("~/Downloads/utsat.csv")
+
+summarize_SAT.V <- utsat %>%
+  summarize(avg_SAT.V = mean(SAT.V),
+            median_SAT.V = median(SAT.V),
+            sd_SAT.V = sd(SAT.V),
+            iqr_SAT.V = IQR(SAT.V),
+            min_SAT.V = min(SAT.V),
+            max_SAT.V = max(SAT.V),
+            q05_SAT.V = quantile(SAT.V, 0.05),
+            q25_SAT.V = quantile(SAT.V, 0.25),
+            q50_SAT.V = quantile(SAT.V, 0.50),
+            q75_SAT.V = quantile(SAT.V, 0.75),
+            q95_SAT.V = quantile(SAT.V, 0.95)) %>%
+  round(1)
+```
+
+```{r 4b, echo=FALSE}
+utsat <- read.csv("~/Downloads/utsat.csv")
+
+summarize_SAT.Q <-utsat %>%
+  summarize(avg_SAT.Q = mean(SAT.Q),
+            median_SAT.Q = median(SAT.Q),
+            sd_SAT.Q = sd(SAT.Q),
+            iqr_SAT.Q = IQR(SAT.Q),
+            min_SAT.Q = min(SAT.Q),
+            max_SAT.Q = max(SAT.Q),
+            q05_SAT.Q = quantile(SAT.Q, 0.05),
+            q25_SAT.Q = quantile(SAT.Q, 0.25),
+            q50_SAT.Q = quantile(SAT.Q, 0.50),
+            q75_SAT.Q = quantile(SAT.Q, 0.75),
+            q95_SAT.Q = quantile(SAT.Q, 0.95)) %>%
+  round(1)
+```
+
+```{r 4c-summary, echo=FALSE}
+utsat <- read.csv("~/Downloads/utsat.csv")
+summarize_SAT.V <-utsat %>%
+  summarize(avg_SAT.V = mean(SAT.V),
+            median_SAT.V = median(SAT.V),
+            sd_SAT.V = sd(SAT.V),
+            iqr_SAT.V = IQR(SAT.V),
+            min_SAT.V = min(SAT.V),
+            max_SAT.V = max(SAT.V),
+            q05_SAT.V = quantile(SAT.V, 0.05),
+            q25_SAT.V = quantile(SAT.V, 0.25),
+            q50_SAT.V = quantile(SAT.V, 0.50),
+            q75_SAT.V = quantile(SAT.V, 0.75),
+            q95_SAT.V = quantile(SAT.V, 0.95)) %>%
+  round(1)
+
+summarize_SAT.Q <-utsat %>%
+  summarize(avg_SAT.Q = mean(SAT.Q),
+            median_SAT.Q = median(SAT.Q),
+            sd_SAT.Q = sd(SAT.Q),
+            iqr_SAT.Q = IQR(SAT.Q),
+            min_SAT.Q = min(SAT.Q),
+            max_SAT.Q = max(SAT.Q),
+            q05_SAT.Q = quantile(SAT.Q, 0.05),
+            q25_SAT.Q = quantile(SAT.Q, 0.25),
+            q50_SAT.Q = quantile(SAT.Q, 0.50),
+            q75_SAT.Q = quantile(SAT.Q, 0.75),
+            q95_SAT.Q = quantile(SAT.Q, 0.95)) %>%
+  round(1)
+  
+summarize_GPA <-utsat %>%
+  summarize(avg_GPA = mean(GPA),
+            median_GPA = median(GPA),
+            sd_GPA = sd(GPA),
+            iqr_GPA = IQR(GPA),
+            min_GPA = min(GPA),
+            max_GPA = max(GPA),
+            q05_GPA = quantile(GPA, 0.05),
+            q25_GPA = quantile(GPA, 0.25),
+            q50_GPA = quantile(GPA, 0.50),
+            q75_GPA = quantile(GPA, 0.75),
+            q95_GPA = quantile(GPA, 0.95)) %>%
+  round(1)
+
+combine_summary <- bind_rows(
+  summarize_SAT.V %>% mutate(Scores_Title="SAT.V"),
+  summarize_SAT.Q %>% mutate(Scores_Title="SAT.Q"),
+  summarize_GPA %>% mutate(Scores_Title="GPA")) %>% select(Scores_Title,everything())
+
+
+```
+
+#Problem 5 ##Part A
+
+```{r 5a, echo = FALSE}
+bikeshare <- read.csv("~/Downloads/bikeshare.csv")
+ 
+library(tidyverse)
+average_hourly_rentals <- bikeshare %>%
+  group_by(hr) %>%
+  summarise(avg_rentals = mean(total))
+ggplot(average_hourly_rentals, aes(x = hr, y = avg_rentals)) +
+  geom_line(color = "brown") +
+  labs(title = "Average Hourly Bike Rentals",
+       x = "Hour of the Day",
+       y = "Average Rentals",
+       caption = "Average hourly bike rentals across all hours of the day") +
+  theme_minimal()
+```
+
+##Part B
+
+```{r 5b, echo = FALSE}
+library(tidyverse)
+avg_rentals_by_hour_workingday <- bikeshare %>%
+  group_by(hr, workingday) %>%
+  summarise(avg_rentals = mean(total))
+
+ggplot(avg_rentals_by_hour_workingday, aes(x = hr, y = avg_rentals, color = factor(workingday))) +
+  geom_line() +
+  labs(title = "Average Bike Rentals by Hour of the Day (Faceted by Working Day)",
+       x = "Hour of the Day",
+       y = "Average Rentals") +
+  facet_wrap(~ workingday) +
+  scale_color_discrete(name = "Working Day") +
+  theme_minimal()
+```
+
+##Part C
+
+```{r 5c, echo = FALSE}
+library(tidyverse)
+bikeshare_9am <- bikeshare %>%
+  filter(hr == 9)
+
+
+avg_ridership_9am <- bikeshare_9am %>%
+  group_by(weathersit, workingday) %>%
+  summarise(avg_rentals = mean(total))
+
+ggplot(avg_ridership_9am, aes(x = factor(weathersit), y = avg_rentals, fill = factor(weathersit))) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Ridership at 9 AM by Weather Situation Code (Faceted by Working Day)",
+       x = "Weather Situation Code",
+       y = "Average Rentals") +
+  facet_wrap(~ workingday) +
+  scale_fill_discrete(name = "Weather Situation") +
+  theme_minimal()
+```
+
+```{r end}
+```

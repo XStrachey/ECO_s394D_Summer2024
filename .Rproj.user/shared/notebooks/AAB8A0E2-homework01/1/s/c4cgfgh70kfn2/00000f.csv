@@ -1,0 +1,2 @@
+"0","ggplot(profs) +"
+"0","  geom_point(aes(x = beauty, y = eval))"

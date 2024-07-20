@@ -1,0 +1,6 @@
+"0","avg_total_by_hr <- bikeshare %>%"
+"0","  group_by(hr) %>%"
+"0","  summarize(avg_total = mean(total))"
+"0",""
+"0","ggplot(avg_total_by_hr) +"
+"0","  geom_line(aes(x = hr, y = avg_total))"

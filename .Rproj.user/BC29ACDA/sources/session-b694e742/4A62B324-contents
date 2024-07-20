@@ -1,0 +1,461 @@
+---
+title: "homework01"
+author: "zhewei xie"
+date: "2024-07-18"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries, include = FALSE, echo=FALSE}
+# load libraries.
+library(tidyverse)
+library(knitr)
+```
+
+# Problem 1: playlists revisited
+
+This problem use observed proportions/frequencies to approximate probabilities.
+
+```{r problem1_dataset, echo=FALSE}
+# read csv as data set.
+plays_top50 = read.csv("../data/raw data/plays_top50.csv", header = TRUE)
+```
+
+## Part A
+
+In the 2x2 table (Table 1) displayed below:\
+**it shows** $P(\text{plays Daft Punk }|\text{ plays David Bowie})$ **as the bottom right entry,**\
+shows $P(\text{plays Daft Punk }|\text{ not plays David Bowie})$ as the bottom left entry,\
+shows $P(\text{not plays Daft Punk }|\text{ plays David Bowie})$ as the upper right entry,\
+shows $P(\text{not plays Daft Punk }|\text{ not plays David Bowie})$ as the upper left entry.
+
+```{r problem1_a, echo=FALSE}
+# make a 2x2 table
+table <- xtabs(~daft.punk + david.bowie, data = plays_top50) %>%
+  # conditional on the levels of the david.bowie variable, the second variable.
+  prop.table(margin = 2) %>%
+  # round the entries in the table to 3 decimal places.
+  round(3)
+
+# transform to data frame
+df <- as.data.frame.matrix(table)
+
+# rename
+colnames(df) <- c("not plays David Bowie", "plays David Bowie")
+rownames(df) <- c("not plays Daft Punk", "plays Daft Punk")
+
+kable(df,
+      caption = "Conditional probabilities of “plays Daft Punk” and “plays David Bowie”")
+```
+
+## Part B
+
+Just like the frequency of Johnny Cash (Table 2) and the 2x2 table of conditional probabilities (Table 3) displayed below, it shows that:  
+$P(\text{plays Johnny Cash }|\text{ plays Pink Floyd})\approx0.105$,  
+$P(\text{plays Johnny Cash }\|\text{ not plays Pink Floyd})\approx0.055$,  
+$P(\text{plays Johnny Cash})\approx0.060$.\
+Therefore:  
+$P(\text{plays Johnny Cash }|\text{ plays Pink Floyd})\neq P(\text{plays Johnny Cash }|\text{ not plays Pink Floyd})\neq P(\text{plays Johnny Cash})$,  
+this implies that **the events "plays Johnny Cash" and "plays Pink Floyd" independent.**
+
+```{r problem1_b_1, echo=FALSE}
+table <- xtabs(~johnny.cash, data = plays_top50) %>%
+  prop.table() %>%
+  round(3) %>%
+  sprintf("%.3f", .)
+
+df <- as.data.frame(table)
+
+rownames(df) <- c("not plays Johnny Cash", "plays Johnny Cash")
+colnames(df) <- c("Freq")
+
+kable(df,
+      caption = "Frequency of “plays Johnny Cash”")
+```
+
+```{r problem1_b_2, echo=FALSE}
+table <- xtabs(~johnny.cash + pink.floyd, data = plays_top50) %>%
+  prop.table(margin = 2) %>%
+  round(3)
+
+df <- as.data.frame.matrix(table)
+
+colnames(df) <- c("not plays Pink Floyd", "plays Pink Floyd")
+rownames(df) <- c("not plays Johnny Cash", "plays Johnny Cash")
+
+kable(df,
+      caption = "Conditional probabilities of “plays Johnny Cash” and “plays Pink Floyd”")
+```
+
+# Problem 2: Super Bowl ads
+
+This problem use observed proportions/frequencies to approximate probabilities.
+
+```{r problem2_dataset, echo=FALSE}
+superbowl = read.csv("../data/raw data/superbowl.csv", header = TRUE)
+```
+
+## Part A
+
+### Estimate $P(\text{danger = TRUE})$
+
+Because $P(\text{danger = TRUE})\approx\text{\{Frequency of danger = TRUE\}}$.  
+Therefore, given the frequency of danger = TRUE (Table 4) displayed below, $P(\text{danger = TRUE})\approx0.30$.
+
+```{r problem2_a_1, echo=FALSE}
+table <- xtabs(~danger, data = superbowl) %>%
+  prop.table() %>%
+  round(2) %>%
+  sprintf("%.2f", .)
+
+df <- as.data.frame(table)
+
+rownames(df) <- c("danger = FALSE", "danger = TRUE")
+colnames(df) <- c("Freq")
+
+kable(df,
+      caption = "Frequency of danger")
+```
+
+### Estimate $P(\text{danger = TRUE | funny = TRUE})$
+
+Because $P(\text{danger = TRUE | funny = TRUE})\\
+\\
+=\frac{P(\text{danger = TRUE, funny = TRUE})}{P(\text{funny = TRUE})}\\
+\\
+\approx\frac{\text{Frequency of danger = TRUE and funny = TRUE both happening}}{\text{Frequency of funny = TRUE happening}}$.  
+  
+Therefore, given the 2x2 table of conditional probabilities (Table 5) displayed below:  
+$P(\text{danger = TRUE | funny = TRUE})\approx0.39$.  
+
+### Estimate $P(\text{danger = TRUE | funny = FALSE})$
+
+Because $P(\text{danger = TRUE | funny = FALSE})\\
+\\
+=\frac{P(\text{danger = TRUE, funny = FALSE})}{P(\text{funny = FALSE})}\\
+\\
+\approx\frac{\text{Frequency of danger = TRUE and funny = FALSE both happening}}{\text{Frequency of funny = FALSE happening}}$.  
+  
+Therefore, given the 2x2 table of conditional probabilities (Table 5) displayed below:  
+$P(\text{danger = TRUE | funny = FALSE})\approx0.12$.
+
+```{r problem2_a_2, echo=FALSE}
+table <- xtabs(~danger + funny, data = superbowl) %>%
+  prop.table(margin = 2) %>%
+  round(2)
+
+df <- as.data.frame.matrix(table)
+
+colnames(df) <- c("funny = FALSE", "funny = TRUE")
+rownames(df) <- c("danger = FALSE", "danger = TRUE")
+
+kable(df,
+      caption = "Conditional probabilities of danger and funny")
+```
+
+### Explanation
+
+Given the results of estimations of $P(\text{danger = TRUE})$, $P(\text{danger = TRUE|funny = TRUE})$ and $P(\text{danger = TRUE | funny = FALSE})$, it is clear that  
+$P(\text{danger = TRUE})\neq P(\text{danger = TRUE | funny = TRUE})\neq P(\text{danger = TRUE | funny = FALSE})$, **so humor and danger look nearly independent of each other.** In the other words, it seem that the use of humor in ads does not have a clear relationship with wheather the ads likely to feature danger.
+
+## Part B
+
+### Estimate $P(\text{animals = TRUE})$
+
+Because $P(\text{animals = TRUE})\approx\text{\{Frequency of animals = TRUE\}}$.  
+Therefore, given the frequency of animals = TRUE (Table 6) displayed below, $P(\text{animals = TRUE})\approx0.37$.
+
+```{r problem2_b_1, echo=FALSE}
+table <- xtabs(~animals, data = superbowl) %>%
+  prop.table() %>%
+  round(2) %>%
+  sprintf("%.2f", .)
+
+df <- as.data.frame(table)
+
+rownames(df) <- c("animals = FALSE", "animals = TRUE")
+colnames(df) <- c("Freq")
+
+kable(df,
+      caption = "Frequency of animals")
+```
+
+### Estimate $P(\text{animals = TRUE | use\_sex = TRUE})$
+
+Because $P(\text{animals = TRUE | use\_sex = TRUE})\\
+\\
+=\frac{P(\text{animals = TRUE, use\_sex = TRUE})}{P(\text{use\_sex = TRUE})}\\
+\\
+\approx\frac{\text{Frequency of animals = TRUE and use\_sex = TRUE both happening}}{\text{Frequency of use\_sex = TRUE happening}}$.  
+  
+Therefore, given the 2x2 table of conditional probabilities (Table 7) displayed below:  
+$P(\text{animals = TRUE | use\_sex = TRUE})\approx0.38$.  
+
+### Estimate $P(\text{animals = TRUE | use\_sex = FALSE})$
+
+Because $P(\text{animals = TRUE | use\_sex = FALSE})\\
+\\
+=\frac{P(\text{animals = TRUE, use\_sex = FALSE})}{P(\text{use\_sex = FALSE})}\\
+\\
+\approx\frac{\text{Frequency of animals = TRUE and use\_sex = FALSE both happening}}{\text{Frequency of use\_sex = FALSE happening}}$.  
+  
+Therefore, given the 2x2 table of conditional probabilities (Table 7) displayed below:  
+$P(\text{animals = TRUE | use\_sex = FALSE})\approx0.37$.
+
+```{r problem2_b_2, echo=FALSE}
+table <- xtabs(~animals + use_sex, data = superbowl) %>%
+  prop.table(margin = 2) %>%
+  round(2)
+
+df <- as.data.frame.matrix(table)
+
+colnames(df) <- c("use_sex = FALSE", "use_sex = TRUE")
+rownames(df) <- c("animals = FALSE", "animals = TRUE")
+
+kable(df,
+      caption = "Conditional probabilities of animals and sexuality")
+```
+
+### Explanation
+
+Given the results of estimations of $P(\text{animals = TRUE})$, $P(\text{animals = TRUE | use\_sex = TRUE})$ and $P(\text{animals = TRUE | use\_sex = FALSE})$, it is clear that  
+$P(\text{animals = TRUE})\approx P(\text{animals = TRUE | use\_sex = TRUE})\approx P(\text{animals = TRUE | use\_sex = FALSE})$, **so it seem that may ads using sexuality are more likely to feature animals than ads not using sexuality.**
+
+## Part C
+
+### Estimate $P(\text{celebrity = TRUE})$
+
+Because $P(\text{celebrity = TRUE})\approx\text{\{Frequency of celebrity = TRUE\}}$.  
+Therefore, given the frequency of celebrity = TRUE (Table 8) displayed below, $P(\text{celebrity = TRUE})\approx0.29$.
+
+```{r problem2_c_1, echo=FALSE}
+table <- xtabs(~celebrity, data = superbowl) %>%
+  prop.table() %>%
+  round(2) %>%
+  sprintf("%.2f", .)
+
+df <- as.data.frame(table)
+
+rownames(df) <- c("celebrity = FALSE", "celebrity = TRUE")
+colnames(df) <- c("Freq")
+
+kable(df)
+```
+
+### Estimate $P(\text{celebrity = TRUE | patriotic = TRUE})$
+
+Because $P(\text{celebrity = TRUE | patriotic = TRUE})\\
+\\
+=\frac{P(\text{celebrity = TRUE, patriotic = TRUE})}{P(\text{patriotic = TRUE})}\\
+\\
+\approx\frac{\text{Frequency of celebrity = TRUE and patriotic = TRUE both happening}}{\text{Frequency of patriotic = TRUE happening}}$.  
+  
+Therefore, given the 2x2 table of conditional probabilities (Table 9) displayed below:  
+$P(\text{celebrity = TRUE | patriotic = TRUE})\approx0.29$.  
+
+### Estimate $P(\text{celebrity = TRUE | patriotic = FALSE})$
+
+Because $P(\text{celebrity = TRUE | patriotic = FALSE})\\
+\\
+=\frac{P(\text{celebrity = TRUE, patriotic = FALSE})}{P(\text{patriotic = FALSE})}\\
+\\
+\approx\frac{\text{Frequency of celebrity = TRUE and patriotic = FALSE both happening}}{\text{Frequency of patriotic = FALSE happening}}$.  
+  
+Therefore, given the 2x2 table of conditional probabilities (Table 9) displayed below:  
+$P(\text{celebrity = TRUE | patriotic = FALSE})\approx0.29$.
+
+```{r problem2_c_2, echo=FALSE}
+table <- xtabs(~celebrity + patriotic, data = superbowl) %>%
+  prop.table(margin = 2) %>%
+  round(2)
+
+df <- as.data.frame.matrix(table)
+
+colnames(df) <- c("patriotic = FALSE", "patriotic = TRUE")
+rownames(df) <- c("celebrity = FALSE", "celebrity = TRUE")
+
+kable(df)
+```
+
+### Explanation
+
+Given the results of estimations of $P(\text{celebrity = TRUE})$, $P(\text{celebrity = TRUE | patriotic = TRUE})$ and $P(\text{celebrity = TRUE | patriotic = FALSE})$, it is clear that  
+$P(\text{celebrity = TRUE})\approx P(\text{celebrity = TRUE | patriotic = TRUE})\approx P(\text{celebrity = TRUE | patriotic = FALSE})$, **so it seem that quite credibly ads using patriotic symbolism are more likely to feature celebrity endorsement than ads not using patriotic symbolism.**
+
+# Problem 3: Beauty, or not, in the classroom
+
+```{r problem3_dataset, echo=FALSE}
+profs = read.csv("../data/raw data/profs.csv", header = TRUE)
+```
+
+## Part A
+
+```{r problem3_a_1, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(profs) +
+  geom_histogram(aes(x = eval), binwidth = 0.1) +
+  xlim(1, 5) +
+  xlab("course evaluation scores (eval)") +
+  ggtitle("Distribution of course evaluation scores") +
+  labs(caption = "The distribution of course evaluation scores is left-skewed and nearly unimodal, with the mode being 4.0.\n And the median of eval distribution is 4, while the iqr is 0.8.")
+```
+
+```{r problem3_a_2, echo=FALSE, message=FALSE, warning=FALSE}
+summarize_profs_eval <- profs %>%
+  summarize(median = median(eval),
+            iqr = IQR(eval))
+# median=4 iqr=0.8
+```
+
+## Part B
+
+```{r problem3_b, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(profs) +
+  geom_boxplot(aes(x = native, y = eval)) +
+  ylim(1, 5) +
+  ggtitle("Distribution of course evaluation scores by whether native English speaker") +
+  labs(x = "native English speaker (native)",
+       y = "course evaluation scores (eval)",
+  caption = "As English native speakers, instructors generally receive higher course evaluation scores,\nbut the differences in extreme cases are more pronounced.\nNon-native speakers, on the other hand, tend to have lower overall course evaluation scores,\nbut these scores are relatively clustered.")
+```
+
+## Part C
+
+```{r problem3_c_1, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(profs) +
+  geom_histogram(aes(x = eval), binwidth = 0.1) +
+  xlim(1, 5) +
+  facet_wrap(~gender, nrow = 2) +
+  ggtitle("Distribution of course evaluation scores faceted by gender") +
+  labs(x = "course evaluation scores (eval)",
+    caption = "Both of distributions of course evalution scores faceted by gender are left-skewed.\n The median course evaluation scores for male instructors (4.15)\n are higher than those for female instructors (3.9).\n However, the IQE value for males (0.8) is also higher compared to females (0.7),\n indicating greater distribution variability.")
+```
+
+```{r problem3_c_2, echo=FALSE, message=FALSE, warning=FALSE}
+summarize_profs_eval_male <- profs %>%
+  filter(gender == 'male') %>%
+  summarize(median = median(eval),
+            iqr = IQR(eval))
+# median=4.15 iqr=0.8
+```
+
+```{r problem3_c_3, echo=FALSE, message=FALSE, warning=FALSE}
+summarize_profs_eval_female <- profs %>%
+  filter(gender == 'female') %>%
+  summarize(median = median(eval),
+            iqr = IQR(eval))
+# median=3.9 iqr=0.7
+```
+
+## Part D
+
+```{r problem3_d, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(profs) +
+  geom_point(aes(x = beauty, y = eval)) +
+  ylim(1, 5) +
+  ggtitle("Association between physical attractiveness and course evaluations") +
+  labs(x = "physical attractivenes (beauty)",
+       y = "course evaluation scores (eval)",
+    caption = "There is no significant linear correlation \nbetween a professor’s physical attractiveness and their course evaluations.")
+```
+
+# Problem 4: SAT scores for UT students
+
+```{r problem4_dataset, echo=FALSE}
+utsat = read.csv("../data/raw data/utsat.csv", header = TRUE)
+```
+
+## Part A
+
+```{r problem4, echo=FALSE}
+summarize_satv <- utsat %>%
+  summarize(avg = mean(SAT.V),
+            sd = sd(SAT.V),
+            iqr = IQR(SAT.V),
+            q05 = quantile(SAT.V, 0.05),
+            q25 = quantile(SAT.V, 0.25),
+            q50 = quantile(SAT.V, 0.50),
+            q75 = quantile(SAT.V, 0.75),
+            q95 = quantile(SAT.V, 0.95))
+            
+summarize_satq <- utsat %>%
+  summarize(avg = mean(SAT.Q),
+            sd = sd(SAT.Q),
+            iqr = IQR(SAT.Q),
+            q05 = quantile(SAT.Q, 0.05),
+            q25 = quantile(SAT.Q, 0.25),
+            q50 = quantile(SAT.Q, 0.50),
+            q75 = quantile(SAT.Q, 0.75),
+            q95 = quantile(SAT.Q, 0.95))
+            
+summarize_gpa <- utsat %>%
+  summarize(avg = mean(GPA),
+            sd = sd(GPA),
+            iqr = IQR(GPA),
+            q05 = quantile(GPA, 0.05),
+            q25 = quantile(GPA, 0.25),
+            q50 = quantile(GPA, 0.50),
+            q75 = quantile(GPA, 0.75),
+            q95 = quantile(GPA, 0.95))
+
+# use bind_rows() to combine rows.
+combined_summary <- bind_rows(
+  summarize_satv %>% round(0) %>% mutate(variables = "SAT.V"),
+  summarize_satq %>% round(0) %>% mutate(variables = "SAT.Q"),
+  summarize_gpa %>% round(2) %>% mutate(variables = "GPA")
+) %>% select(variables, everything())
+
+# Print the table
+kable(combined_summary, row.names = FALSE,
+      caption = "The table shows the mean, standard deviation, inter-quartile rang,\n5th percentile, 25th, percentile, median (50 percentile), 75th percentile, and 95th percentile\nof the SAT Verbal, SAT Quantitative, and GPA.")
+```
+
+# Problem 5: bike sharing
+
+```{r problem5, echo=FALSE}
+bikeshare = read.csv("../data/raw data/bikeshare.csv", header = TRUE)
+```
+
+## Plot A
+
+```{r problem5_plot_a, echo=FALSE}
+avg_total_by_hr <- bikeshare %>%
+  group_by(hr) %>%
+  summarize(avg_total = mean(total))
+
+ggplot(avg_total_by_hr) +
+  geom_line(aes(x = hr, y = avg_total)) +
+  labs(x = "hour (hr)", y = "average hourly bike rentals")
+```
+
+## Plot B
+
+```{r problem5_plot_b, echo=FALSE}
+avg_total_by_hr <- bikeshare %>%
+  group_by(hr, workingday) %>%
+  summarize(avg_total = mean(total))
+
+ggplot(avg_total_by_hr) +
+  geom_line(aes(x = hr, y = avg_total)) +
+  facet_wrap(~workingday, nrow = 2) +
+  xlab("hour (hr)") +
+  ylab("average hourly bike rentals")
+```
+
+## Plot C
+
+```{r problem5_plot_c, echo=FALSE}
+avg_total_by_hr <- bikeshare %>%
+  group_by(hr, workingday) %>%
+  filter(hr == 8)
+
+ggplot(avg_total_by_hr) +
+  geom_col(aes(x = weathersit, y = mean(total) %>% log10())) +
+  facet_wrap(~workingday, nrow = 2) +
+  xlab("weathersit (weather situation code)")
+```
