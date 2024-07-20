@@ -1,0 +1,1 @@
+"0","bikeshare = read.csv(""../data/raw data/bikeshare.csv"", header = TRUE)"

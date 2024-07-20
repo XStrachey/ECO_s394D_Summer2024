@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # load libraries.
 library(tidyverse)
 library(knitr)
+library(ggtext)
 ```
 
 # Problem 1: playlists revisited
@@ -51,7 +52,7 @@ colnames(df) <- c("not plays David Bowie", "plays David Bowie")
 rownames(df) <- c("not plays Daft Punk", "plays Daft Punk")
 
 kable(df,
-      caption = "Conditional probabilities of “plays Daft Punk” and “plays David Bowie”")
+      caption = "Conditional probabilities of “plays Daft Punk” and “plays David Bowie”.")
 ```
 
 ## Part B
@@ -76,7 +77,7 @@ rownames(df) <- c("not plays Johnny Cash", "plays Johnny Cash")
 colnames(df) <- c("Freq")
 
 kable(df,
-      caption = "Frequency of “plays Johnny Cash”")
+      caption = "Frequency of “plays Johnny Cash”.")
 ```
 
 ```{r problem1_b_2, echo=FALSE}
@@ -90,7 +91,7 @@ colnames(df) <- c("not plays Pink Floyd", "plays Pink Floyd")
 rownames(df) <- c("not plays Johnny Cash", "plays Johnny Cash")
 
 kable(df,
-      caption = "Conditional probabilities of “plays Johnny Cash” and “plays Pink Floyd”")
+      caption = "Conditional probabilities of “plays Johnny Cash” and “plays Pink Floyd”.")
 ```
 
 # Problem 2: Super Bowl ads
@@ -120,7 +121,7 @@ rownames(df) <- c("danger = FALSE", "danger = TRUE")
 colnames(df) <- c("Freq")
 
 kable(df,
-      caption = "Frequency of danger")
+      caption = "Frequency of danger.")
 ```
 
 ### Estimate $P(\text{danger = TRUE | funny = TRUE})$
@@ -156,7 +157,7 @@ colnames(df) <- c("funny = FALSE", "funny = TRUE")
 rownames(df) <- c("danger = FALSE", "danger = TRUE")
 
 kable(df,
-      caption = "Conditional probabilities of danger and funny")
+      caption = "Conditional probabilities of danger and funny.")
 ```
 
 ### Explanation
@@ -183,7 +184,7 @@ rownames(df) <- c("animals = FALSE", "animals = TRUE")
 colnames(df) <- c("Freq")
 
 kable(df,
-      caption = "Frequency of animals")
+      caption = "Frequency of animals.")
 ```
 
 ### Estimate $P(\text{animals = TRUE | use\_sex = TRUE})$
@@ -219,7 +220,7 @@ colnames(df) <- c("use_sex = FALSE", "use_sex = TRUE")
 rownames(df) <- c("animals = FALSE", "animals = TRUE")
 
 kable(df,
-      caption = "Conditional probabilities of animals and sexuality")
+      caption = "Conditional probabilities of animals and sexuality.")
 ```
 
 ### Explanation
@@ -245,7 +246,8 @@ df <- as.data.frame(table)
 rownames(df) <- c("celebrity = FALSE", "celebrity = TRUE")
 colnames(df) <- c("Freq")
 
-kable(df)
+kable(df,
+      caption = "Frequency of celebrity.")
 ```
 
 ### Estimate $P(\text{celebrity = TRUE | patriotic = TRUE})$
@@ -280,7 +282,8 @@ df <- as.data.frame.matrix(table)
 colnames(df) <- c("patriotic = FALSE", "patriotic = TRUE")
 rownames(df) <- c("celebrity = FALSE", "celebrity = TRUE")
 
-kable(df)
+kable(df,
+      caption = "Conditional probabilities of celebrity and patriotic.")
 ```
 
 ### Explanation
@@ -299,31 +302,58 @@ profs = read.csv("../data/raw data/profs.csv", header = TRUE)
 ```{r problem3_a_1, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(profs) +
   geom_histogram(aes(x = eval), binwidth = 0.1) +
-  xlim(1, 5) +
   theme(plot.caption = element_text(hjust = 0)) + 
-  ggtitle("Distribution of course evaluation scores") +
-  labs(x = "course evaluation scores (eval)",
-    caption = str_wrap("The distribution of course evaluation scores is left-skewed and nearly unimodal, with the mode being 4.0. And the median of eval distribution is 4, while the iqr is 0.8."))
+  ggtitle("Distribution of Course Evaluation Scores at UT Austin") +
+  scale_x_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
+  labs(x = "Course evaluation scores (score)",
+    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and nearly unimodal, with the mode <br>being 4.0. And the median of eval distribution is 4, while the iqr is 0.8.") +
+  theme(
+    # use ggtext::element_markdown() to render Markdown
+    plot.caption = element_markdown())
 ```
 
 ```{r problem3_a_2, echo=FALSE, message=FALSE, warning=FALSE}
 summarize_profs_eval <- profs %>%
   summarize(median = median(eval),
-            iqr = IQR(eval))
+            iqr = IQR(eval),
+            mode = mode(eval))
 # median=4 iqr=0.8
 ```
 
 ## Part B
 
-```{r problem3_b, echo=FALSE, message=FALSE, warning=FALSE}
+```{r problem3_b_1, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(profs) +
   geom_boxplot(aes(x = native, y = eval)) +
-  ylim(1, 5) +
   theme(plot.caption = element_text(hjust = 0)) + 
-  ggtitle("Distribution of course evaluation scores by whether native English speaker") +
-  labs(x = "native English speaker (native)",
-       y = "course evaluation scores (eval)",
-  caption = str_wrap("As English native speakers, instructors generally receive higher course evaluation scores, but the differences in extreme cases are more pronounced. Non-native speakers, on the other hand, tend to have lower overall course evaluation scores, but these scores are relatively clustered."))
+  ggtitle("Distribution of Course Evaluation Scores by Native English Speaker Status \nat UT Austin") +
+  scale_y_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
+  labs(x = "Native English speaker",
+       y = "Course evaluation scores (score)",
+  caption = "<b>Figure 2.</b> As English native speakers, instructors generally receive higher course evaluation scores <br>(median = 4), but the differences in extreme cases are more pronounced (max = 5, min = 2.1). <br>Non-native speakers, on the other hand, tend to have lower overall course evaluation scores (median = 3.6), <br>but these scores are relatively clustered (max = 4.6, min = 2.7).") +
+  theme(
+    # use ggtext::element_markdown() to render Markdown
+    plot.caption = element_markdown())
+```
+
+```{r problem3_b_2, echo=FALSE, message=FALSE, warning=FALSE}
+summarize_profs_eval_by_native <- profs %>%
+  filter(native == "yes") %>%
+  summarize(median = median(eval),
+            iqr = IQR(eval),
+            max = max(eval),
+            min = min(eval))
+# median 4 iqr 0.7 max 5 min 2.1
+```
+
+```{r problem3_b_3, echo=FALSE, message=FALSE, warning=FALSE}
+summarize_profs_eval_by_nonative <- profs %>%
+  filter(native == "no") %>%
+  summarize(median = median(eval),
+            iqr = IQR(eval),
+            max = max(eval),
+            min = min(eval))
+# median 3.6 iqr 0.7 max 4.6 min 2.7
 ```
 
 ## Part C
@@ -331,12 +361,15 @@ ggplot(profs) +
 ```{r problem3_c_1, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(profs) +
   geom_histogram(aes(x = eval), binwidth = 0.1) +
-  xlim(1, 5) +
   facet_wrap(~gender, nrow = 2) +
   theme(plot.caption = element_text(hjust = 0)) + 
-  ggtitle("Distribution of course evaluation scores faceted by gender") +
-  labs(x = "course evaluation scores (eval)",
-    caption = str_wrap("Both of distributions of course evalution scores faceted by gender are left-skewed. The median course evaluation scores for male instructors (4.15) are higher than those for female instructors (3.9). However, the IQE value for males (0.8) is also higher compared to females (0.7), indicating greater distribution variability."))
+  ggtitle("Distribution of Course Evaluation Scores by Gender at UT Austin") +
+  scale_x_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
+  labs(x = "Course evaluation scores (score)",
+    caption = "<b>Figure 3.</b> Both of distributions of course evalution scores faceted by gender are left-skewed, while the <br>median course evaluation scores for male instructors (4.15) are higher than those for female instructors (3.9). <br>However, the IQE value for males (0.8) is also higher compared to females (0.7), indicating greater <br>distribution variability.") +
+  theme(
+    # use ggtext::element_markdown() to render Markdown
+    plot.caption = element_markdown())
 ```
 
 ```{r problem3_c_2, echo=FALSE, message=FALSE, warning=FALSE}
@@ -357,15 +390,27 @@ summarize_profs_eval_female <- profs %>%
 
 ## Part D
 
-```{r problem3_d, echo=FALSE, message=FALSE, warning=FALSE}
+```{r problem3_d_1, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(profs) +
   geom_point(aes(x = beauty, y = eval)) +
-  ylim(1, 5) +
+  geom_smooth(aes(x = beauty, y = eval), method = "lm") +
   theme(plot.caption = element_text(hjust = 0)) + 
-  ggtitle("Association between physical attractiveness and course evaluations") +
-  labs(x = "physical attractivenes (beauty)",
-       y = "course evaluation scores (eval)",
-    caption = str_wrap("There is no significant linear correlation between a professor’s physical attractiveness and their course evaluations."))
+  ggtitle("Association Between Physical Attractiveness and Course Evaluation Scores \nat UT Austin") +
+  scale_y_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
+  labs(x = "Physical attractivenes (rating units)",
+       y = "Course evaluation scores (score)",
+    caption = str_wrap("<b>Figure 4.</b> There is a weak linear correlation (correlation = 0.189) between a professor’s physical attractiveness <br>and their course evaluations.")) +
+  theme(
+    # use ggtext::element_markdown() to render Markdown
+    plot.caption = element_markdown())
+```
+
+```{r problem3_d_2, echo=FALSE, message=FALSE, warning=FALSE}
+cor_x <- profs$beauty
+cor_y <- profs$eval
+
+cor_xy <- cor(cor_x, cor_y)
+# 0.1890391
 ```
 
 # Problem 4: SAT scores for UT students
@@ -373,8 +418,6 @@ ggplot(profs) +
 ```{r problem4_dataset, echo=FALSE}
 utsat = read.csv("../data/raw data/utsat.csv", header = TRUE)
 ```
-
-## Part A
 
 ```{r problem4, echo=FALSE}
 summarize_satv <- utsat %>%
@@ -416,7 +459,7 @@ combined_summary <- bind_rows(
 
 # Print the table
 kable(combined_summary, row.names = FALSE,
-      caption = "The table shows the mean, standard deviation, inter-quartile rang,\n5th percentile, 25th, percentile, median (50 percentile), 75th percentile, and 95th percentile\nof the SAT Verbal, SAT Quantitative, and GPA.")
+      caption = "The table shows the mean, standard deviation, inter-quartile rang, 5th percentile, 25th, percentile, median (50 percentile), 75th percentile, and 95th percentile of the SAT Verbal, SAT Quantitative, and GPA. The data contains the SAT scores and graduating college GPAs for every UT student who entered UT in a specific, recent year, and went on to graduate from UT within 6 years.")
 ```
 
 # Problem 5: bike sharing
@@ -435,10 +478,13 @@ avg_total_by_hr <- bikeshare %>%
 ggplot(avg_total_by_hr) +
   geom_line(aes(x = hr, y = avg_total)) +
   theme(plot.caption = element_text(hjust = 0)) + 
-  ggtitle("Average hourly bike rentals across all hours of the day") +
+  ggtitle("Average Hourly Bike Rentals in Washington, DC (2011-12)") +
   scale_x_continuous(breaks = seq(0, 23, 1)) +
-  labs(x = "hour (hr)", y = "average hourly bike rentals",
-       caption = "x-axis represent hour of the day\ny-axis represent average bike rentals")
+  labs(x = "Hour of day (hours, 0 = midnight)", y = "Average bike rentals (count)",
+       caption = "<b>Figure 5.</b> <b>Average hourly bike rentals in Washington, DC (2011-12).</b> The distribution is bimodal, with <br>peak during the morning and evening rush hours.") +
+  theme(
+    # use ggtext::element_markdown() to render Markdown
+    plot.caption = element_markdown())
 ```
 
 ## Plot B
@@ -453,25 +499,42 @@ ggplot(avg_total_by_hr) +
   facet_wrap(~workingday, nrow = 2, 
              labeller = as_labeller(c("0" = "weekend or holiday", "1" = "workingday"))) +
   theme(plot.caption = element_text(hjust = 0)) + 
-  ggtitle("Average bike rentals by hour of the day.",
-          subtitle = "Faceted according to whether it is a working day.") +
+  ggtitle("Average Hourly Bike Rentals in Washington, DC (2011-12)",
+          subtitle = "Faceted according to whether it is a working day") +
   scale_x_continuous(breaks = seq(0, 23, 1)) +
-  labs(x = "hour (hr)", y = "average hourly bike rentals",
-       caption = "x-axis represent hour of the day\ny-axis represent average bike rentals")
+  labs(x = "Hour of day (hours, 0 = midnight)", y = "Average bike rentals (count)",
+       caption = "<b>Figure 6.</b> <b>Average hourly bike rentals in Washington, DC (2011-2012) grouped by whether it is a <br>working day or not.</b> During working days, bike rentals peak during the morning and evening rush hours. <br>In contrast, on holidays or weekends, bike rentals are more evenly distributed throughout the day.") +
+  theme(
+    # use ggtext::element_markdown() to render Markdown
+    plot.caption = element_markdown())
 ```
 
 ## Plot C
 
-```{r problem5_plot_c, echo=FALSE}
+```{r problem5_plot_c, echo=FALSE, message=FALSE}
 avg_total_by_hr <- bikeshare %>%
-  filter(hr == 9)
+  filter(hr == 9) %>%
+  group_by(weathersit, workingday) %>%
+  summarize(avg_rentals_on_9 = mean(total))
+
+weather_labels <- c(
+  "1" = "Clear, Few clouds, Partly cloudy, Partly cloudy",
+  "2" = "Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist",
+  "3" = "Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds",
+  "4" = "Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog"
+)
 
 ggplot(avg_total_by_hr) +
-  geom_col(aes(x = weathersit, y = mean(total) %>% log10())) +
-  xlim(0, 4) +
-  facet_wrap(~workingday, nrow = 2, 
+  geom_col(aes(x = weathersit, y = avg_rentals_on_9)) +
+  facet_wrap(~workingday, 
              labeller = as_labeller(c("0" = "weekend or holiday", "1" = "workingday"))) +
   theme(plot.caption = element_text(hjust = 0)) + 
-  labs(x = "weather situation code",
-       caption = "x-axis represent weather situation code, which has the following values:\n– 1: Clear, Few clouds, Partly cloudy, Partly cloudy\n– 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist\n– 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds\n– 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog\ny-axis represent average ridership during the 9 AM hour after log10")
+  ggtitle("Average Bike Rentals by Weather Condition during the 9 AM hour \nin Washington, DC (2011-12)",
+          subtitle = "Faceted according to whether it is a working day") +
+  scale_x_continuous(limits = c(0, 5), breaks = seq(1, 4, 1)) +
+  labs(x = "Weather situation code", y = "Average bike rentals (count)",
+       caption = "<b>Figure 7.</b> <b>Average bike rentals grouped by weather condition and working day status during the <br>9 AM in Washington, DC (2011-12).</b> The number of bike rentals on working days is generally higher than <br>on non-working days. As the weather conditions worsen, people gradually reduce their bike rentals, but they <br>tend to tolerate bad weather more on working days than on non-working days. This is evident as bike <br>rentals on working days are almost the same under weather conditions 1 and 2, whereas they decrease on <br>non-working days. In the worst weather condition (weather situation code 4), people do not choose to travel <br>by renting bikes at all.<br><br>x-axis represent weather situation code, which has the following values:<br>– 1: Clear, Few clouds, Partly cloudy, Partly cloudy<br>– 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist<br>– 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds<br>– 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog") +
+  theme(
+    # use ggtext::element_markdown() to render Markdown
+    plot.caption = element_markdown())
 ```
