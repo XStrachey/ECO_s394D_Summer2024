@@ -59,7 +59,7 @@ kable(df,
 
 Just like the frequency of Johnny Cash (Table 2) and the 2x2 table of conditional probabilities (Table 3) displayed below, it shows that:  
 $P(\text{plays Johnny Cash }|\text{ plays Pink Floyd})\approx0.105$,  
-$P(\text{plays Johnny Cash }\|\text{ not plays Pink Floyd})\approx0.055$,  
+$P(\text{plays Johnny Cash }|\text{ not plays Pink Floyd})\approx0.055$,  
 $P(\text{plays Johnny Cash})\approx0.060$.\
 Therefore:  
 $P(\text{plays Johnny Cash }|\text{ plays Pink Floyd})\neq P(\text{plays Johnny Cash }|\text{ not plays Pink Floyd})\neq P(\text{plays Johnny Cash})$,  
@@ -162,7 +162,7 @@ kable(df,
 
 ### Explanation
 
-Given the results of estimations of $P(\text{danger = TRUE})$, $P(\text{danger = TRUE|funny = TRUE})$ and $P(\text{danger = TRUE | funny = FALSE})$, it is clear that  
+Given the results of estimations of $P(\text{danger = TRUE})$, $P(\text{danger = TRUE | funny = TRUE})$ and $P(\text{danger = TRUE | funny = FALSE})$, it is clear that  
 $P(\text{danger = TRUE})\neq P(\text{danger = TRUE | funny = TRUE})\neq P(\text{danger = TRUE | funny = FALSE})$, **so humor and danger look nearly independent of each other.** In the other words, it seem that the use of humor in ads does not have a clear relationship with wheather the ads likely to feature danger.
 
 ## Part B
@@ -306,7 +306,7 @@ ggplot(profs) +
   ggtitle("Distribution of Course Evaluation Scores at UT Austin") +
   scale_x_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Course evaluation scores (score)",
-    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and nearly unimodal, with the mode <br>being 4.0. And the median of eval distribution is 4, while the iqr is 0.8.") +
+    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and nearly unimodal, with the mode <br>being 4.0. And the median of eval distribution is 4.0, while the iqr is 0.8.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -330,7 +330,7 @@ ggplot(profs) +
   scale_y_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Native English speaker",
        y = "Course evaluation scores (score)",
-  caption = "<b>Figure 2.</b> As English native speakers, instructors generally receive higher course evaluation scores <br>(median = 4), but the differences in extreme cases are more pronounced (max = 5, min = 2.1). <br>Non-native speakers, on the other hand, tend to have lower overall course evaluation scores (median = 3.6), <br>but these scores are relatively clustered (max = 4.6, min = 2.7).") +
+  caption = "<b>Figure 2.</b> As English native speakers, instructors generally receive higher course evaluation scores <br>(median = 4), but the differences in extreme cases are more pronounced (max = 5.0, min = 2.1). <br>Non-native speakers, on the other hand, tend to have lower overall course evaluation scores (median = 3.6), <br>but these scores are relatively clustered (max = 4.6, min = 2.7).") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -397,9 +397,9 @@ ggplot(profs) +
   theme(plot.caption = element_text(hjust = 0)) + 
   ggtitle("Association Between Physical Attractiveness and Course Evaluation Scores \nat UT Austin") +
   scale_y_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
-  labs(x = "Physical attractivenes (rating units)",
+  labs(x = "Physical attractiveness (rating units)",
        y = "Course evaluation scores (score)",
-    caption = str_wrap("<b>Figure 4.</b> There is a weak linear correlation (correlation = 0.189) between a professor’s physical attractiveness <br>and their course evaluations.")) +
+    caption = str_wrap("<b>Figure 4.</b> Regardless of the rating of physical attractiveness scores, course evaluation scores exhibit <br>substantial variation. And there is a weak linear correlation (correlation = 0.189) between a professor's <br>physical attractiveness and their course evaluations.")) +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -481,7 +481,7 @@ ggplot(avg_total_by_hr) +
   ggtitle("Average Hourly Bike Rentals in Washington, DC (2011-12)") +
   scale_x_continuous(breaks = seq(0, 23, 1)) +
   labs(x = "Hour of day (hours, 0 = midnight)", y = "Average bike rentals (count)",
-       caption = "<b>Figure 5.</b> <b>Average hourly bike rentals in Washington, DC (2011-12).</b> The distribution is bimodal, with <br>peak during the morning and evening rush hours.") +
+       caption = "<b>Figure 5.</b> <b>Average hourly bike rentals in Washington, DC (2011-12).</b> The distribution is bimodal, with <br>peak during the morning and evening rush hours. Meanwhile, the number of rentals during the evening rush <br>hour is significantly higher than during the morning rush hour.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -503,7 +503,7 @@ ggplot(avg_total_by_hr) +
           subtitle = "Faceted according to whether it is a working day") +
   scale_x_continuous(breaks = seq(0, 23, 1)) +
   labs(x = "Hour of day (hours, 0 = midnight)", y = "Average bike rentals (count)",
-       caption = "<b>Figure 6.</b> <b>Average hourly bike rentals in Washington, DC (2011-2012) grouped by whether it is a <br>working day or not.</b> During working days, bike rentals peak during the morning and evening rush hours. <br>In contrast, on holidays or weekends, bike rentals are more evenly distributed throughout the day.") +
+       caption = "<b>Figure 6.</b> <b>Average hourly bike rentals in Washington, DC (2011-2012) grouped by whether it is a <br>working day or not.</b> During working days, bike rentals peak during the morning and evening rush hours, <br>and the number of rentals is quite similar during these times. In contrast, on holidays or weekends, the <br>distribution of bike rentals is a gentle hill-like curve.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
