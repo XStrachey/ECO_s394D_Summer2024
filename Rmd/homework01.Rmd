@@ -163,7 +163,7 @@ kable(df,
 ### Explanation
 
 Given the results of estimations of $P(\text{danger = TRUE})$, $P(\text{danger = TRUE | funny = TRUE})$ and $P(\text{danger = TRUE | funny = FALSE})$, it is clear that  
-$P(\text{danger = TRUE})\neq P(\text{danger = TRUE | funny = TRUE})\neq P(\text{danger = TRUE | funny = FALSE})$, **so under the given condition, humor and danger are not independent.**
+$P(\text{danger = TRUE})\neq P(\text{danger = TRUE | funny = TRUE})\neq P(\text{danger = TRUE | funny = FALSE})$. **In light of these numbers, it seem that ads using humor are more likely to feature danger than ads not using humor, and under the given condition, humor and danger are not independent.**
 
 ## Part B
 
@@ -306,7 +306,7 @@ ggplot(profs) +
   ggtitle("Distribution of Course Evaluation Scores at UT Austin") +
   scale_x_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Course evaluation scores (score)",
-    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and concentrated around 4, indicating <br>that the overall rating for the professor is generally positive. And the median of eval distribution is 4.0, while <br>the iqr is 0.8.") +
+    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and concentrated around 4.0, indicating <br>that the overall rating for the professor is generally positive. And the median of eval distribution is 4.0, while <br>the iqr is 0.8.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
