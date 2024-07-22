@@ -399,7 +399,7 @@ ggplot(profs) +
   scale_y_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Physical attractiveness (rating units)",
        y = "Course evaluation scores (score)",
-    caption = str_wrap("<b>Figure 4.</b> Regardless of the rating of physical attractiveness scores, course evaluation scores shows great <br>spread. And there is a weak linear correlation (correlation = 0.189) between a professor's physical attractive-<br>ness and their course evaluations.")) +
+    caption = str_wrap("<b>Figure 4.</b> Regardless of the rating of physical attractiveness scores, course evaluation scores shows great <br>spread. And there is a linear correlation (correlation = 0.189) between a professor's physical attractive-<br>ness and their course evaluations.")) +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
