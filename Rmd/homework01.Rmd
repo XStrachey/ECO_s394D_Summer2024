@@ -306,7 +306,7 @@ ggplot(profs) +
   ggtitle("Distribution of Course Evaluation Scores at UT Austin") +
   scale_x_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Course evaluation scores (score)",
-    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and concentrated around 4.0, indicating <br>that the overall rating for the professor is generally positive. And the median of eval distribution is 4.0, while <br>the iqr is 0.8.") +
+    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and concentrated around 4.0, indicating <br>that the overall rating for the professor is generally positive. And the median of the distribution is 4.0, while <br>the iqr is 0.8.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -366,7 +366,7 @@ ggplot(profs) +
   ggtitle("Distribution of Course Evaluation Scores by Gender at UT Austin") +
   scale_x_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Course evaluation scores (score)",
-    caption = "<b>Figure 3.</b> Both of distributions of course evalution scores faceted by gender are left-skewed, while the <br>median course evaluation scores for male instructors (4.15) are higher than those for female instructors (3.9). <br>However, the IQR value for males (0.8) is also higher compared to females (0.7), indicating greater <br>distribution variability.") +
+    caption = "<b>Figure 3.</b> Both of distributions of course evalution scores faceted by gender are left-skewed, while the <br>median course evaluation scores for male instructors (4.15) are higher than those for female instructors (3.9). <br>However, the IQR value for males (0.8) is also higher compared to females (0.7), indicating that the scores <br>for male instructors are more spread out or variable.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -399,7 +399,7 @@ ggplot(profs) +
   scale_y_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Physical attractiveness (rating units)",
        y = "Course evaluation scores (score)",
-    caption = str_wrap("<b>Figure 4.</b> Regardless of the rating of physical attractiveness scores, course evaluation scores exhibit <br>substantial variation. And there is a weak linear correlation (correlation = 0.189) between a professor's <br>physical attractiveness and their course evaluations.")) +
+    caption = str_wrap("<b>Figure 4.</b> Regardless of the rating of physical attractiveness scores, course evaluation scores shows great <br>spread. And there is a weak linear correlation (correlation = 0.189) between a professor's physical attractive-<br>ness and their course evaluations.")) +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -487,6 +487,8 @@ ggplot(avg_total_by_hr) +
     plot.caption = element_markdown())
 ```
 
+_Note: The significantly higher number of bicycle rentals during the evening peak compared to the morning peak implies that there may be other influencing factors. The subsequent Plot B, which provides statistics on whether the rentals occur on working days, offers a possible explanation._
+
 ## Plot B
 
 ```{r problem5_plot_b, echo=FALSE, message=FALSE}
@@ -503,7 +505,7 @@ ggplot(avg_total_by_hr) +
           subtitle = "Faceted according to whether it is a working day") +
   scale_x_continuous(breaks = seq(0, 23, 1)) +
   labs(x = "Hour of day (hours, 0 = midnight)", y = "Average bike rentals (count)",
-       caption = "<b>Figure 6.</b> <b>Average hourly bike rentals in Washington, DC (2011-2012) grouped by whether it is a <br>working day or not.</b> During working days, bike rentals peak during the morning and evening rush hours, <br>and the number of rentals is quite similar during these times. In contrast, on holidays or weekends, the <br>distribution of bike rentals is a gentle hill-like curve.") +
+       caption = "<b>Figure 6.</b> <b>Average hourly bike rentals in Washington, DC (2011-2012) grouped by whether it is a <br>working day or not.</b> During working days, bike rentals peak during the morning and evening rush hours, <br>and the number of rentals is quite similar during these times. In contrast, on holidays or weekends, the <br>distribution of bike rentals is a gentle hill-like curve, and the number of bicycle rentals is not very high in the <br>morning, increases from noon to afternoon, and gradually decreases in the evening.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
