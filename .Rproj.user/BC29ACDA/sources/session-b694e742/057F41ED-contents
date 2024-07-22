@@ -63,7 +63,7 @@ $P(\text{plays Johnny Cash }|\text{ not plays Pink Floyd})\approx0.055$,
 $P(\text{plays Johnny Cash})\approx0.060$.\
 Therefore:  
 $P(\text{plays Johnny Cash }|\text{ plays Pink Floyd})\neq P(\text{plays Johnny Cash }|\text{ not plays Pink Floyd})\neq P(\text{plays Johnny Cash})$,  
-this implies that **the events "plays Johnny Cash" and "plays Pink Floyd" independent.**
+this implies that **the events "plays Johnny Cash" and "plays Pink Floyd" are not independent.**
 
 ```{r problem1_b_1, echo=FALSE}
 table <- xtabs(~johnny.cash, data = plays_top50) %>%
@@ -163,7 +163,7 @@ kable(df,
 ### Explanation
 
 Given the results of estimations of $P(\text{danger = TRUE})$, $P(\text{danger = TRUE | funny = TRUE})$ and $P(\text{danger = TRUE | funny = FALSE})$, it is clear that  
-$P(\text{danger = TRUE})\neq P(\text{danger = TRUE | funny = TRUE})\neq P(\text{danger = TRUE | funny = FALSE})$, **so humor and danger look nearly independent of each other.** In the other words, it seem that the use of humor in ads does not have a clear relationship with wheather the ads likely to feature danger.
+$P(\text{danger = TRUE})\neq P(\text{danger = TRUE | funny = TRUE})\neq P(\text{danger = TRUE | funny = FALSE})$, **so under the given condition, humor and danger are not independent.**
 
 ## Part B
 
@@ -226,7 +226,7 @@ kable(df,
 ### Explanation
 
 Given the results of estimations of $P(\text{animals = TRUE})$, $P(\text{animals = TRUE | use\_sex = TRUE})$ and $P(\text{animals = TRUE | use\_sex = FALSE})$, it is clear that  
-$P(\text{animals = TRUE})\approx P(\text{animals = TRUE | use\_sex = TRUE})\approx P(\text{animals = TRUE | use\_sex = FALSE})$, **so it seem that may ads using sexuality are more likely to feature animals than ads not using sexuality.**
+$P(\text{animals = TRUE})\approx P(\text{animals = TRUE | use\_sex = TRUE})\approx P(\text{animals = TRUE | use\_sex = FALSE})$, **so it may seem that ads using sexuality are as likely to feature animals as ads not using sexuality. This implies that the events using sexuality and featuring animals are independent.**
 
 ## Part C
 
@@ -289,7 +289,7 @@ kable(df,
 ### Explanation
 
 Given the results of estimations of $P(\text{celebrity = TRUE})$, $P(\text{celebrity = TRUE | patriotic = TRUE})$ and $P(\text{celebrity = TRUE | patriotic = FALSE})$, it is clear that  
-$P(\text{celebrity = TRUE})\approx P(\text{celebrity = TRUE | patriotic = TRUE})\approx P(\text{celebrity = TRUE | patriotic = FALSE})$, **so it seem that quite credibly ads using patriotic symbolism are more likely to feature celebrity endorsement than ads not using patriotic symbolism.**
+$P(\text{celebrity = TRUE})\approx P(\text{celebrity = TRUE | patriotic = TRUE})\approx P(\text{celebrity = TRUE | patriotic = FALSE})$, **so it seem that quite credibly ads using patriotic symbolism are as likely to feature celebrity endorsement as ads not using patriotic symbolism. This implies that the events using patriotic symbolism and featuring celebrity endorsement are independent.**
 
 # Problem 3: Beauty, or not, in the classroom
 
@@ -306,7 +306,7 @@ ggplot(profs) +
   ggtitle("Distribution of Course Evaluation Scores at UT Austin") +
   scale_x_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Course evaluation scores (score)",
-    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and nearly unimodal, with the mode <br>being 4.0. And the median of eval distribution is 4.0, while the iqr is 0.8.") +
+    caption = "<b>Figure 1.</b> The distribution of course evaluation scores is left-skewed and concentrated around 4, indicating <br>that the overall rating for the professor is generally positive. And the median of eval distribution is 4.0, while <br>the iqr is 0.8.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -360,13 +360,13 @@ summarize_profs_eval_by_nonative <- profs %>%
 
 ```{r problem3_c_1, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(profs) +
-  geom_histogram(aes(x = eval), binwidth = 0.1) +
+  geom_histogram(aes(x = eval, y = ..density..), binwidth = 0.1) +
   facet_wrap(~gender, nrow = 2) +
   theme(plot.caption = element_text(hjust = 0)) + 
   ggtitle("Distribution of Course Evaluation Scores by Gender at UT Austin") +
   scale_x_continuous(limits = c(0.9, 5.1), breaks = seq(1, 5, 1)) +
   labs(x = "Course evaluation scores (score)",
-    caption = "<b>Figure 3.</b> Both of distributions of course evalution scores faceted by gender are left-skewed, while the <br>median course evaluation scores for male instructors (4.15) are higher than those for female instructors (3.9). <br>However, the IQE value for males (0.8) is also higher compared to females (0.7), indicating greater <br>distribution variability.") +
+    caption = "<b>Figure 3.</b> Both of distributions of course evalution scores faceted by gender are left-skewed, while the <br>median course evaluation scores for male instructors (4.15) are higher than those for female instructors (3.9). <br>However, the IQR value for males (0.8) is also higher compared to females (0.7), indicating greater <br>distribution variability.") +
   theme(
     # use ggtext::element_markdown() to render Markdown
     plot.caption = element_markdown())
@@ -459,7 +459,7 @@ combined_summary <- bind_rows(
 
 # Print the table
 kable(combined_summary, row.names = FALSE,
-      caption = "The table shows the mean, standard deviation, inter-quartile rang, 5th percentile, 25th, percentile, median (50 percentile), 75th percentile, and 95th percentile of the SAT Verbal, SAT Quantitative, and GPA. The data contains the SAT scores and graduating college GPAs for every UT student who entered UT in a specific, recent year, and went on to graduate from UT within 6 years.")
+      caption = "The table shows the mean, standard deviation, inter-quartile rang, 5th percentile, 25th, percentile, median (50 percentile), 75th percentile, and 95th percentile of the SAT Verbal, SAT Quantitative, and GPA (all summaries rounded to 2 decimal places). The data contains the SAT scores and graduating college GPAs for every UT student who entered UT in a specific, recent year, and went on to graduate from UT within 6 years.")
 ```
 
 # Problem 5: bike sharing
