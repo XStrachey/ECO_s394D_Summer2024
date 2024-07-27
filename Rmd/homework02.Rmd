@@ -141,20 +141,21 @@ creatinine = read.csv("../data/raw data/creatinine.csv", header = TRUE)
 
 ## Question A
 
-```{r problem3_a_1, echo=FALSE}
+```{r problem3_a_1, echo=FALSE, message=FALSE}
 ggplot(creatinine) +
   geom_point(aes(x = age, y = creatclear)) +
-  geom_abline(intercept = 147.8129158, slope = -0.6198159, color = 'red') +
+  geom_smooth(aes(x = age, y = creatclear), method = "lm") +
   scale_x_continuous(breaks = seq(15, 90, 15)) +
+  ggtitle("Creatine Clearance Rate versus Age") +
   labs(x = "Age", y = "Creatine clearance rate (mL/minute)",
-    caption = "<b>Figure 5. creatine clearance rate versus age.</b>") +
+    caption = "<b>Figure 5. Creatine clearance rate versus age.</b>") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
 
 ```{r problem3_a_2, echo=FALSE}
 lm_creatinine = lm(creatclear ~ age, data = creatinine)
-table <- coef(lm_creatinine)
+table <- coef(lm_creatinine) %>% round(2)
 
 df <- as.data.frame(table)
 
@@ -162,60 +163,59 @@ rownames(df) <- c("intercept", "slope")
 colnames(df) <- c("value")
 
 kable(df,
-      caption = "The fitted linear model parameters of creatinine.")
+      caption = "The fitted linear model parameters of creatinine (based on data from individuals aged 18 to 88).")
 ```
 
 Based on the fitted linear regression model parameter, it is clear that the linear regression is:  
 
-$\text{Clearance}=147.8129158-0.6198159\cdot\text{Age}$.  
+$\text{Clearance}=147.81-0.62\cdot\text{Age}$.  
 
-_Note: Based on the data from 18-year-old to 88-year-old._
+_Note: Based on data from individuals aged 18 to 88._
 
 The linear regression gives the conditional expected value of creatinine clearance rate, given someone's age.  
 
 So let's plug in $\text{Age}=55$ into the fitted equation:  
 
-$E(\text{Clearance}|Age=55)=147.8129158-0.6198159\cdot55=113.723$  
+$E(\text{Clearance}|Age=55)=147.81-0.62\cdot55=113.71$  
 
-This is the exception of creatinine clearance rate for a 55-year-old, with the value is 113.723 mL/minute.
+This is the expected of creatinine clearance rate for a 55-year-old, with the value is 113.71 mL/minute.
 
 \newpage
 
 ## Question B
 
 ```{r problem3_b, echo=FALSE, message=FALSE}
-df = data.frame(age = 15:90)
-df$predicted <- predict(lm_creatinine, newdata = df)
+df = data.frame(age = 18:89)
+df$predicted <- predict(lm_creatinine, newdata = df) %>% round(2)
 
-n <- 19
+n <- 18
 split_df <- split(df, ceiling(seq_along(df$age) / n))
 df <- bind_cols(split_df)
 
 colnames(df) <- c("age", "predicted", "age", "predicted", "age", "predicted", "age", "predicted")
 
-kable(df)
+kable(df,
+      caption = "Predictions of creatinine clearance rate based on age (based on data from individuals aged 18 to 88).")
 
 # 147.8129158-0.6198159*40
 # 147.8129158-0.6198159*60
 ```
 
-Based on the linear regression, it says that a one-year change in age is associated with a 0.6198159 mL/minute change in creatinine clearance rate, on average.
-
-\newpage
+Based on the linear regression, it says that a one-year change in age is associated with a 0.62 mL/minute change in creatinine clearance rate, on average.
 
 ## Question C
 
 Based on the fitted linear regression:  
 
-$\text{Clearance}=147.8129158-0.6198159\cdot\text{Age}$.  
+$\text{Clearance}=147.81-0.62\cdot\text{Age}$.  
 
-It is clear that $E(\text{Clearance}|Age=40)=147.8129158-0.6198159\cdot40=123.0203$  
+It is clear that $E(\text{Clearance}|Age=40)=147.81-0.62\cdot40\approx123.0$  
 
-and $E(\text{Clearance}|Age=60)=147.8129158-0.6198159\cdot60=110.624$.  
+and $E(\text{Clearance}|Age=60)=147.81-0.62\cdot60\approx110.6$.  
 
-So for the 40-year-old, $\hat\varepsilon=y-\hat y=135-123.0203\approx12$,  
+So for the 40-year-old, $\hat\varepsilon=y-\hat y=135-123.0\approx12.0$,  
 
-while for the 60-year-old, $\hat\varepsilon=y-\hat y=112-110.624\approx1$.
+while for the 60-year-old, $\hat\varepsilon=y-\hat y=112-110.6\approx1.4$.
 
 Therefore, based on the differences, the 40-year-old is healthier for the age.
 
@@ -233,6 +233,8 @@ Event A is defined as ‘you will get at least one lemon among the 3 cars you pu
 
 $P(A)=1-P(\overline A)=1-\frac{\binom{20}{3}}{\binom{30}{3}}\approx0.719$
 
+**Conclusion: **The probability that you will get at least one lemon when you buy 3 cars is approximately 71.9%.
+
 ## Part B
 
 ### Question 1
@@ -249,13 +251,21 @@ $Set_{even}=\{2, 4, 6\}$
 
 Event A is ‘the sum of the two numbers is odd.’ This event can be split into two steps. Step 1 is to choose one odd number from the set of odd numbers, and Step 2 is to choose one even number from the set of even numbers. Interestingly, we could choose from the odd set first or the even set first, and it does not affect the sum. Meanwhile, the probability space is clearly the random selection of 2 numbers from 1 to 6.
 
-$P(A)=\frac{\binom{3}{1}\binom{3}{1}2!}{\binom{6}{2}}$
+$P(A)=\frac{\binom{3}{1}\binom{3}{1}2!}{\binom{6}{1}\cdot\binom{6}{1}}=\frac{1}{2}$
+
+**Conclusion: **The probability that the sum of the two numbers is odd is 50%.
+
+```{r problem4_b_1, echo=FALSE, message=FALSE}
+# choose(3, 1)*choose(3, 1)*2/(choose(6, 1)*choose(6, 1))
+```
 
 ### Question 2
 
-$x+y\leq7$
+The event ‘the sum of the two numbers is less than 7’ can be divided into subevents, as follows:  
 
-```{r problem4_b_1, echo=FALSE}
+$P(x+y<7)=P(y<6,x=1)+P(y<5,x=2)+P(y<4,x=3)+P(y<3,x=4)+P(y<2,x=5)+P(y<1,x=6)$
+
+```{r problem4_b_2, echo=FALSE, message=FALSE}
 x <- seq(1, 6)
 y <- seq(1, 6)
 
@@ -267,10 +277,14 @@ ggplot(dice2) +
   scale_y_continuous(limits = c(1, 6), breaks = seq(1, 6, 1)) +
   geom_point(aes(x = x, y = y, color = ifelse((x + y) %% 2 == 0, 'even', 'odd'))) +
   geom_abline(intercept = 7, slope = -1, color = "blue") +
-  labs(x = "First dice number", y = "Second dice number")
+  labs(x = "First dice number", y = "Second dice number", color = "Parity",
+       caption = "<b>Figure 6. The event space of throwing two dice (each with the usual 6 sides, numbered 1-6).</b>") +
+  scale_color_brewer(type = "qual") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
 ```
 
-```{r problem4_b_2, echo=FALSE}
+```{r problem4_b_3, echo=FALSE}
 cal_dice_number <- function(start_n = 1, end_n = 6, upper_n = 7, 
                             include_odd = 1, include_even = 1) {
   x = seq(start_n, end_n)
@@ -292,10 +306,10 @@ cal_dice_number <- function(start_n = 1, end_n = 6, upper_n = 7,
   return(n)
 }
 
-print(cal_dice_number(1, 6, 7))
+# print(cal_dice_number(1, 6, 7))
 ```
 
-Through counting the case, the probability that the sum of the two numbers is less than 7 is $\frac{15}{36}$.
+**Conclusion: **Through counting the case, the probability that the sum of the two numbers is less than 7 is $\frac{15}{36}=\frac{5}{12}$.
 
 ### Question 3
 
@@ -305,7 +319,12 @@ Event B is "the sum of the two numbers is odd".
 
 So $P(A|B)=\frac{P(AB)}{P(B)}$.
 
-Given that there are 6 cases where the sum of the two numbers is less than 7 and odd, and there are 18 cases where the sum of the two numbers is odd, the probability that the sum of the two numbers is less than 7, given that it is odd, is $\frac{6}{18}$.
+Given that there are 6 cases where the sum of the two numbers is less than 7 and odd, and there are 18 cases where the sum of the two numbers is odd, the probability that the sum of the two numbers is less than 7, given that it is odd, is $\frac{6}{18}=\frac{1}{3}$.
+
+Because $P(A|\overline B)=\frac{P(A\overline B)}{P(\overline B)}=\frac{9}{18}=\frac{1}{2}$.  
+Clearly, $P(A|B)\neq P(A|\overline B)\neq P(A)$.
+
+**Conclusion: **The events ‘the sum of the two numbers is less than 7’ and ‘the sum of the two numbers is odd’ are **not independent.**
 
 ## Part C
 
@@ -318,6 +337,8 @@ Given the expected fraction of random clickers is 0.3, it means that $P(RC)=0.3$
 Besides, because random clickers would click either one with equal probability, which means $P(Y|RC)=P(N|RC)=0.5$ and the following survey results: 65% said Yes and 35% said No.  
 
 Therefore, $P(Y)=P(Y|RC)\cdot P(RC)+P(Y|TC)\cdot P(TC)=0.5\cdot0.3+P(Y|TC)\cdot0.7=0.65$, it is clear that $P(Y|TC)=\frac{P(Y)-P(Y|RC)\cdot P(RC)}{P(TC)}=\frac{0.65-0.5\cdot0.3}{0.7}\approx0.714$.
+
+**Conclusion: **The fraction of people who are truthful clickers and answered “Yes” is approximately 71.4%.
 
 ## Part D
 
@@ -333,6 +354,8 @@ $P(TP)=P(TP|D)\cdot P(D)+P(TP|\overline D)\cdot P(\overline D)=0.993\cdot0.00002
 
 According to Bayes’ theorem, $P(D|TP)=\frac{P(TP|D)\cdot P(D)}{P(TP)}=\frac{0.993\cdot0.000025}{0.0001248225}\approx0.1989$.
 
+**Conclusion: **The probability that someone has the disease given that they tested positive is approximately 19.89%.
+
 ## Part E
 
 Let's donate the event "an aircraft is present in a certain area" as A, the event "a radar correctly registers its presence" as R.  
@@ -345,46 +368,15 @@ Because $P(R)=P(R|A)\cdot P(A)+P(R|\overline A)\cdot P(\overline A)=0.99\cdot0.0
 
 According to Bayes’ theorem, $P(A|R)=\frac{P(R|A)\cdot P(A)}{P(R)}=\frac{0.99\cdot0.05}{0.1445}\approx0.3426$
 
+**Conclusion: **The conditional probability that an aircraft is present given that the radar registers an aircraft presence is approximately 34.26%.
+
+\newpage
+
 # Problem 5: modeling soccer games with the Poisson distribution
 
 ```{r problem5_dataset, echo=FALSE}
 away = read.csv("../data/raw data/epl_2018_19_away.csv", header = TRUE)
 home = read.csv("../data/raw data/epl_2018_19_home.csv", header = TRUE)
-```
-
-```{r problem5_0, echo=FALSE}
-avg_goals = (sum(home$GF) + sum(home$GA)) / 20
-baseline_home = avg_home_per_game = sum(home$GF) / (19 * 20)
-baseline_away = avg_away_per_game = sum(away$GF) / (19 * 20)
-
-# We also need two other pieces of information: the
-# average number of goals scored per match by a home
-# team up till now and the average number scored by an
-# away team.
-home <- home %>%
-  mutate(attack_strength = GF / avg_goals) %>%
-  mutate(defence_weakness = GA / avg_goals)
-away <- away %>%
-  mutate(attack_strength = GF / avg_goals) %>%
-  mutate(defence_weakness = GA / avg_goals)
-
-# merge table
-merged_goals <- full_join(home, away, by = "Team", suffix = c(".home", ".away"))
-
-merged_goals <- merged_goals %>%
-  mutate(
-    GP = coalesce(GP.home, 0) + coalesce(GP.away, 0),
-    GF = coalesce(GF.home, 0) + coalesce(GF.away, 0),
-    GA = coalesce(GA.home, 0) + coalesce(GA.away, 0)
-  ) %>%
-  select(Team, GP, GF, GA)
-
-merged_goals <- merged_goals %>%
-  mutate(attack_strength = merged_goals$GF / avg_goals) %>%
-  mutate(defence_weakness = merged_goals$GA / avg_goals)
-
-attack_strength <- merged_goals$GF / avg_goals
-defence_weakness <- merged_goals$GA / avg_goals
 ```
 
 ```{r echo=FALSE}
@@ -404,77 +396,115 @@ defence_weakness <- merged_goals$GA / avg_goals
 # mean(home$GF) / 19
 ```
 
-**Question: ** 
+## Question 
 
 What are the estimated probabilities of win, lose, and draw results for a match between Liverpool (home) and Tottenham (away), and a match between Manchester City (home) and Arsenal (away)?
 
-**Approach: **
+## Approach
 
-Step 1:  
+### Step 1  
 
 The article ["One match to go!", by Spiegelhalter and Ng](https://faculty.chicagobooth.edu/nicholas.polson/teaching/41000/speigelhalter-epl.pdf) provides an algorithm to evaluate the ‘attack strength’ and ‘defence weakness’ of a team in a season.  
 
-$\text{Attack Strength}=\frac{\text{\‘goals for\’ of the team}}{\text{the average number of goals scored by a team}}$  
+$\text{Attack Strength}=\frac{\text{‘goals for’ of the team}}{\text{the average number of goals scored by a team}}$  
 
-$\text{Defence Weakness}=\frac{\text{\‘goals against\’ of the team}}{\text{the average number of goals scored by a team}}$  
+$\text{Defence Weakness}=\frac{\text{‘goals against’ of the team}}{\text{the average number of goals scored by a team}}$  
 
-To use this algorithm, let’s define the ‘average number of goals scored by a team’ as $\text{avg\_goals}$, the "'goals against' of team i" as $\text{GF}_i$, and the "'goals against' of team i" as $\text{GA}_i$.
+To use this algorithm, let’s define the ‘average number of goals scored by a team’ as $\mu_\text{goals}$, the "'goals against' of team i" as $\text{GF}_i$, and the "'goals against' of team i" as $\text{GA}_i$. Besides, each goal scored as ‘goals against’ for a home team is the same as ‘goals for’ for the away team.
 
 So, using the algorithm and data, we can calculate:  
 
-$\text{avg\_goals}=\frac{\sum_{i=1}^{20}(\text{GF}_i+\text{GA}_i)}{20}=53.6$  
+$\mu_\text{goals}=\frac{\sum_{i=1}^{20}(\text{GF}_i+\text{GA}_i)}{20}=53.6$  
 
 _Note: 20 is the number of the teams of the League._
 
+```{r problem5_1, echo=FALSE}
+avg_goals = (sum(home$GF) + sum(home$GA)) / 20
+```
+
 By examining the data from ‘epl_2018-19_away.csv’ and ‘epl_2018-19_home.csv,’ it is clear that the goals are categorized into two classes: home team goals and away team goals. Therefore, the following can be established:  
 
-$\text{GF}=\text{GF}_{home}+\text{GF}_{away}$
+$\text{GF}_i={\text{GF}_i}_{home}+{\text{GF}_i}_{away}$
 
-$\text{GA}=\text{GA}_{home}+\text{GA}_{away}$
+$\text{GA}_i={\text{GA}_i}_{home}+{\text{GA}_i}_{away}$
 
 _Note: We should merge the two tables carefully because the order of teams in the tables is different. We should merge them using the key ‘Team.’_
 
-After merging the two files by the key ‘Team’ and summing the GF and GA from the merged file, it is easy to use R to calculate each team’s ‘attack strength’ and ‘defence weakness’ with the appropriate function.
+After merging the two files by the key ‘Team’ and summing the GF and GA from the merged file, it is easy to use R to calculate each team’s ‘attack strength’ and ‘defence weakness’ with the appropriate function:  
 
-Step 2:  
+$\text{AttackStrength}_i=\frac{\text{GF}_i}{\mu_\text{goals}}$  
 
-According to the article, it is also important to calculate the average goals per game as a baseline, categorized by goals scored by the home team and by the away team.
+$\text{DefenceWeakness}_i=\frac{\text{GA}_i}{\mu_\text{goals}}$
 
-Since the attribute named ‘GP’ stands for ‘games played,’ it is clear that each team played 19 games as the home team and 19 games as the away team. Therefore, the total number of games is $19\cdot20=380$.
+```{r problem5_2, echo=FALSE}
+# merge table
+merged_goals <- full_join(home, away, by = "Team", suffix = c(".home", ".away"))
 
-Let’s denote the ‘average goals scored by home teams’ as $\text{avg\_goals\_per\_game}_{home}$, denote the "average goals scored by away team" as $\text{avg\_goals\_per\_game}_{away}$.
+merged_goals <- merged_goals %>%
+  mutate(
+    GP = coalesce(GP.home, 0) + coalesce(GP.away, 0),
+    GF = coalesce(GF.home, 0) + coalesce(GF.away, 0),
+    GA = coalesce(GA.home, 0) + coalesce(GA.away, 0)
+  ) %>%
+  select(Team, GP, GF, GA)
 
-$\text{GF}_i$ represent the ‘goals for’ by team $i$ as the home team, while $\text{GA}_i$ represents the ‘goals against’ team $i$ as the home team". Since each goal scored as ‘goals against’ for a home team is the same as ‘goals for’ for the away team, it follows that:  
+merged_goals <- merged_goals %>%
+  mutate(attack_strength = merged_goals$GF / avg_goals) %>%
+  mutate(defence_weakness = merged_goals$GA / avg_goals)
+```
 
-$\text{baseline}_{home}=\text{avg\_goals\_per\_game}_{home}=\frac{\sum_{i=1}^{20}\text{GF}_i}{19\cdot20}\approx1.568421$
+### Step 2  
 
-$\text{baseline}_{away}=\text{avg\_goals\_per\_game}_{away}=\frac{\sum_{i=1}^{20}\text{GA}_i}{19\cdot20}\approx1.252632$
+According to the article, it is also important to calculate the average goals per game as a baseline, categorized by goals scored by home teams and by away teams.
 
-Step 3:  
+Since the attribute named ‘GP’ stands for ‘games played,’ it is clear that each team played 19 games as the home team and 19 games as the away team. Therefore, the total number of games is $19\cdot20=380$. 380 games have been played with 1072 goals: 596 scored by home teams (average approximately 1.57 per game); 476 by away teams (average approximately 1.25 per game).
+
+```{r problem5_3, echo=FALSE}
+# sum(home$GF)
+# mean(home$GF) / 19
+# sum(away$GF)
+# mean(away$GF) / 19
+# sum(home$GF) + sum(away$GF)
+```
+
+${\text{GF}_i}_{home}$ represent the ‘goals for’ by team $i$ as the home team, while ${\text{GF}_i}_{away}$ represents the ‘goals for’ team $i$ as the away team:  
+
+$\text{baseline}_{home}=\frac{\sum_{i=1}^{20}{\text{GF}_i}_{home}}{19\cdot20}\approx1.568421$
+
+$\text{baseline}_{away}=\frac{\sum_{i=1}^{20}{\text{GF}_i}_{away}}{19\cdot20}\approx1.252632$
+
+```{r problem5_4, echo=FALSE}
+baseline_home = avg_home_per_game = sum(home$GF) / (19 * 20)
+baseline_away = avg_away_per_game = sum(away$GF) / (19 * 20)
+```
+
+### Step 3  
 
 According to the method outlined in the article, the expected goals for a home team are:  
 
-$\text{goals}=\text{baseline}_{home}\cdot\text{attack\_strength}_{home}\cdot\text{defence\_weakness}_{away}$
+${\text{expected goals}}_{home}=\text{baseline}_{home}\times\text{AttackStrength}_{home}\times\text{DefenceWeakness}_{away}$
 
 And the expected goals of an away team are:  
 
-$\text{goals}=\text{baseline}_{away}\cdot\text{attack\_strength}_{away}\cdot\text{defence\_weakness}_{home}$
+${\text{expected goals}}_{away}=\text{baseline}_{away}\times\text{AttackStrength}_{away}\times\text{DefenceWeakness}_{home}$
 
-Step 4:  
+### Step 4  
 
-The goals scored by teams are modeled using a Poisson distribution, based on the independence of each game, ‘attack strength’ and ‘defence weakness’. And the scores of a team do not give us additional information about the performance of another team.   
+The goals scored by teams are modeled using a Poisson distribution, based on the independence of each game, and ‘attack strength’ and ‘defence weakness’ of each team. And the scores of a team do not give us additional information about the performance of another team.   
 
-Firstly, the number of goals in a game $\text{goals}$ is modeled as $\lambda$. Then, the probability $P(X = x)$ represents the likelihood of the target team scoring exactly $x$ goals.  
+Firstly, the number of goals scored by a team in a game named as ‘$\text{expected goals}$’ is modeled as $\lambda$. Then, the probability $P(X = x)$ represents the likelihood of the target team scoring exactly $x$ goals.  
 
 According to the Poisson distribution:  
 
-$P(X=x)=\frac{\lambda^x}{x!}\cdot e^{-x}$
+$P(X=x)=\frac{\lambda^x}{x!}e^{-\lambda}$
 
-Given that the goals scored by each team are independent, the joint probability for a match is:  
+Given that the expected goals scored by each team are independent, the joint probability for a match is:  
 
-$P(X=x,Y=y)=\frac{\lambda^x}{x!}\cdot e^{-x}\cdot\frac{\lambda^y}{y!}\cdot e^{-y}$
+$P(X=x,Y=y)=\frac{\lambda_1^x}{x!}e^{-\lambda_1}\times\frac{\lambda_2^y}{y!}e^{-\lambda_2}$
 
-## Question 1
+\newpage
+
+## Result 1
 
 ```{r problem5_a_1, echo=FALSE}
 # Liverpool (home) vs. Tottenham (away)
@@ -484,28 +514,64 @@ tottenham_away_attack_strength <- (merged_goals[merged_goals$Team == "Tottenham"
 tottenham_away_defence_weakness <- (merged_goals[merged_goals$Team == "Tottenham", ])$defence_weakness
 
 # Calculate lambda values
-lambda_liverpool_win <- baseline_home * liverpool_home_attack_strength * tottenham_away_defence_weakness
-lambda_liverpool_lose <- baseline_away * liverpool_home_defence_weakness * tottenham_away_attack_strength
+liverpool_expected_goals <- baseline_home * liverpool_home_attack_strength * tottenham_away_defence_weakness
+tottenham_expected_goals <- baseline_away * tottenham_away_attack_strength * liverpool_home_defence_weakness
+
+lambda_liverpool = liverpool_expected_goals
+lambda_tottenham = tottenham_expected_goals
+
+# baseline_home
+# liverpool_home_attack_strength
+# tottenham_away_defence_weakness
+# lambda_liverpool
+# baseline_away
+# tottenham_away_attack_strength
+# liverpool_home_defence_weakness
+# lambda_tottenham
 ```
 
-Following the approach outlined above, we can calculate the result of each match. For example, for the match between Liverpool (home) and Tottenham (away), to determine the probability of a 1-0 result, which is the most likely outcome, we multiply 31.6% by 48.3% to get 15.3%.
+Following the approach outlined above, we can calculate the result of each match. For example, for the match between Liverpool (home) and Tottenham (away), to determine the probability of a 2-1 result, we multiply 27% by 34% to get approximately 9%, as demonstrated by the following calculation steps:
+
+$\because$
+
+$\lambda_{{\text{Liverpool}}_{win}}=\text{baseline}_{\text{home}}\times\text{AttackStrength}_\text{Liverpool}\times\text{DefenceWeakness}_\text{Tottenham}$
+
+$\lambda_{{\text{Liverpool}}_{lose}}=\text{baseline}_{\text{away}}\times\text{AttackStrength}_\text{Tottenham}\times\text{DefenceWeakness}_\text{Liverpool}$
+
+$\therefore$
+
+$\lambda_{{\text{Liverpool}}_{win}}=1.568421\times1.660448\times0.7276119\approx1.89$
+
+$\lambda_{{\text{Liverpool}}_{lose}}=1.252632\times1.25\times0.4104478\approx0.64$
+
+$P(X=2,Y=1)=\frac{1.89^2}{2!}e^{-1.89}\times\frac{0.64^1}{1!}e^{-0.64}\approx0.2698\times0.3375\approx0.091$
 
 ```{r problem5_a_2, echo=FALSE}
 liverpool_vs_tottenham_probs = tibble(k = 0:6)
 liverpool_vs_tottenham_probs = liverpool_vs_tottenham_probs %>%
-  mutate(liverpool = dpois(k, lambda = lambda_liverpool_win)) %>%
-  mutate(tottenham = dpois(k, lambda = lambda_liverpool_lose))
+  mutate(liverpool = dpois(k, lambda = lambda_liverpool) %>% round(2) * 100) %>%
+  mutate(tottenham = dpois(k, lambda = lambda_tottenham) %>% round(2) * 100)
 
-kable(liverpool_vs_tottenham_probs)
+long_data <- liverpool_vs_tottenham_probs %>%
+  pivot_longer(cols = -k, names_to = "team", values_to = "probability")
+
+wide_data <- long_data %>%
+  pivot_wider(names_from = k, values_from = probability, names_sep = "_")
+
+expected_goals_values <- c(round(liverpool_expected_goals, 2), round(tottenham_expected_goals, 2))
+
+wide_data <- wide_data %>%
+  mutate(expected_goals = expected_goals_values) %>%
+  select(team, expected_goals, everything())
+
+wide_data <- as.data.frame(wide_data)
+colnames(wide_data) <- c("Team", "Expected goals", "0 (%)", "1 (%)", "2 (%)", "3 (%)", "4 (%)", "5 (%)", "6 (%)")
+
+kable(wide_data,
+      caption = "Expected number of goals, and percentage chance of getting a particular score for the two teams (Liverpool (home) versus Tottenham (away)), assuming a Poisson distribution")
 ```
 
-``` {r echo=FALSE}
-# dpois(0, 1.40*0.85*0.52)
-# dpois(2, 1.08*1.46*1.37)
-# 
-# dpois(1, (merged_goals[merged_goals$Team == "Liverpool", ])$attack_strength)
-# dpois(0, (merged_goals[merged_goals$Team == "Tottenham", ])$defence_weakness)
-```
+To calculate probabilities using the Poisson distribution, we can use the dpois function in R. To estimate the probabilities of each possible match result, we multiply the Poisson probabilities of the two competing teams together, assuming independence. Creating a heat map to visualize these probabilities is also a useful approach.  
 
 ```{r problem5_a_3, echo=FALSE}
 # draw heat plot
@@ -513,13 +579,22 @@ soccer_scores = tibble(liverpool = 0:6, tottenham = 0:6)
 
 soccer_probs = soccer_scores %>%
   tidyr::expand(liverpool, tottenham) %>%
-  mutate(prob = dpois(liverpool, lambda_liverpool_win) * dpois(tottenham, lambda_liverpool_lose))
+  mutate(prob = dpois(liverpool, lambda_liverpool) * dpois(tottenham, lambda_tottenham))
 
 ggplot(soccer_probs) + 
+  ggtitle("Liverpool v.s. Tottenham") +
   geom_tile(aes(x = liverpool, y = tottenham, fill = prob)) +
   geom_text(aes(x = liverpool, y = tottenham, label=round(prob, 3)), color='darkblue') + 
-  scale_fill_gradient(low = "white", high = "red")
+  scale_fill_gradient(low = "white", high = "red") +
+  labs(x = "Liverpool (home)", y = "Tottenham (away)",
+       caption = "<b>Figure 7. Probabilities of the expected goals in a match between Liverpool (home) and Tottenham <br>(away).</b>") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
 
+Based on the probabilities, we can easily sum the probabilities of all outcomes that meet our condition to determine the win/lose/draw result for the match between Liverpool (home) and Tottenham (away).
+
+```{r problem5_a_4, echo=FALSE}
 # calculate the overall probability
 win <- soccer_probs %>% 
   filter(liverpool > tottenham) %>%
@@ -545,11 +620,13 @@ rownames(df) <- c("Liverpool win", "Liverpool lose", "Draw")
 kable(df)
 ```
 
-```{r problem5_a_4, echo=FALSE}
+As an alternative approach, running a Monte Carlo simulation can also provide similar probabilities for the match between Liverpool (home) and Tottenham (away).
+
+```{r problem5_a_5, echo=FALSE}
 # Simulate lots of games
 NMC <- 100000
-liverpool_goals <- rpois(NMC, lambda_liverpool_win)
-tottenham_goals <- rpois(NMC, lambda_liverpool_lose)
+liverpool_goals <- rpois(NMC, lambda_liverpool)
+tottenham_goals <- rpois(NMC, lambda_tottenham)
 
 # Compile the results
 results <- xtabs(~liverpool_goals + tottenham_goals)
@@ -568,9 +645,11 @@ rownames(df) <- c("Liverpool win", "Liverpool lose", "Draw")
 kable(df)
 ```
 
-## Question 2
+\newpage
 
-```{r problem5_3, echo=FALSE}
+## Result 2
+
+```{r problem5_b_1, echo=FALSE}
 # Manchester City ( (home) vs. Arsenal (away)
 man_city_home_attack_strength <- (merged_goals[merged_goals$Team == "Manchester City", ])$attack_strength
 man_city_home_defence_weakness <- (merged_goals[merged_goals$Team == "Manchester City", ])$defence_weakness
@@ -578,44 +657,91 @@ arsenal_away_attack_strength <- (merged_goals[merged_goals$Team == "Arsenal", ])
 arsenal_away_defence_weakness <- (merged_goals[merged_goals$Team == "Arsenal", ])$defence_weakness
 
 # Calculate lambda values
-lambda_man_city_win <- baseline_home * man_city_home_attack_strength * arsenal_away_defence_weakness
-lambda_man_city_lose <- baseline_away * man_city_home_defence_weakness * arsenal_away_attack_strength
+man_city_expected_goals <- baseline_home * man_city_home_attack_strength * arsenal_away_defence_weakness
+arsenal_expected_goals <- baseline_away * arsenal_away_attack_strength * man_city_home_defence_weakness
 
-# Simulate lots of games
-NMC <- 100000
-man_city_goals <- rpois(NMC, lambda_man_city_win)
-arsenal_goals <- rpois(NMC, lambda_man_city_lose)
+lambda_man_city = man_city_expected_goals
+lambda_arsenal = arsenal_expected_goals
 
-# Compile the results
-results <- xtabs(~man_city_goals + arsenal_goals)
+# baseline_home
+# man_city_home_attack_strength
+# arsenal_away_defence_weakness
+# lambda_man_city
+# baseline_away
+# arsenal_away_attack_strength
+# man_city_home_defence_weakness
+# lambda_arsenal
 
-# Monte Carlo estimates of probabilities
-win <- sum(man_city_goals > arsenal_goals) / NMC
-lose <- sum(man_city_goals < arsenal_goals) / NMC
-draw <- sum(man_city_goals == arsenal_goals) / NMC
-
-df <- data.frame(c(win, lose, draw))
-
-# rename
-colnames(df) <- c("Proabilities")
-rownames(df) <- c("Manchester City win", "Manchester City lose", "Draw")
-
-kable(df)
+# dpois(2, lambda=lambda_man_city)
+# dpois(1, lambda=lambda_arsenal)
+# dpois(2, lambda=lambda_man_city) * dpois(1, lambda=lambda_arsenal)
 ```
 
-```{r problem5_4, echo=FALSE}
+Following the approach outlined above, we can calculate the result of each match. For example, for the match between Manchester City (home) and Arsenal (away), to determine the probability of a 2-1 result, we multiply 27% by 34% to get approximately 9%, as demonstrated by the following calculation steps:
+
+$\because$
+
+$\lambda_{{\text{Manchester City}}_{win}}=\text{baseline}_{\text{home}}\times\text{AttackStrength}_\text{Manchester City}\times\text{DefenceWeakness}_\text{Arsenal}$
+
+$\lambda_{{\text{Manchester City}}_{lose}}=\text{baseline}_{\text{away}}\times\text{AttackStrength}_\text{Arsenal}\times\text{DefenceWeakness}_\text{Manchester City}$
+
+$\therefore$
+
+$\lambda_{{\text{Manchester City}}_{win}}=1.568421\times1.772388\times0.9514925\approx2.65$
+
+$\lambda_{{\text{Manchester City}}_{lose}}=1.252632\times1.36194\times0.4291045\approx0.73$
+
+$P(X=2,Y=1)=\frac{2.65^2}{2!}e^{-2.65}\times\frac{0.73^1}{1!}e^{-0.73}\approx0.2481\times0.3518\approx0.087$
+
+```{r problem5_b_2, echo=FALSE}
+man_city_vs_arsenal_probs = tibble(k = 0:6)
+man_city_vs_arsenal_probs = man_city_vs_arsenal_probs %>%
+  mutate(man_city = dpois(k, lambda = lambda_man_city) %>% round(2) * 100) %>%
+  mutate(arsenal = dpois(k, lambda = lambda_arsenal) %>% round(2) * 100)
+
+long_data <- man_city_vs_arsenal_probs %>%
+  pivot_longer(cols = -k, names_to = "team", values_to = "probability")
+
+wide_data <- long_data %>%
+  pivot_wider(names_from = k, values_from = probability, names_sep = "_")
+
+expected_goals_values <- c(round(man_city_expected_goals, 2), round(arsenal_expected_goals, 2))
+
+wide_data <- wide_data %>%
+  mutate(expected_goals = expected_goals_values) %>%
+  select(team, expected_goals, everything())
+
+wide_data <- as.data.frame(wide_data)
+colnames(wide_data) <- c("Team", "Expected goals", "0 (%)", "1 (%)", "2 (%)", "3 (%)", "4 (%)", "5 (%)", "6 (%)")
+
+kable(wide_data,
+      caption = "Expected number of goals, and percentage chance of getting a particular score for the two teams (Manchester City (home) versus Arsenal (away)), assuming a Poisson distribution")
+```
+
+Using the same approach as in the previous question, we calculate the joint probabilities for the match between Manchester City (home) and Arsenal (away) and represent the results as a heat map.
+
+```{r problem5_b_3, echo=FALSE}
 # draw heat plot
 soccer_scores = tibble(man_city = 0:6, arsenal = 0:6)
 
 soccer_probs = soccer_scores %>%
   tidyr::expand(man_city, arsenal) %>%
-  mutate(prob = dpois(man_city, lambda_man_city_win) * dpois(arsenal, lambda_man_city_lose))
+  mutate(prob = dpois(man_city, lambda_man_city) * dpois(arsenal, lambda_arsenal))
 
 ggplot(soccer_probs) + 
+  ggtitle("Manchester v.s. Arsenal") +
   geom_tile(aes(x = man_city, y = arsenal, fill = prob)) +
   geom_text(aes(x = man_city, y = arsenal, label=round(prob, 3)), color='darkblue') + 
-  scale_fill_gradient(low = "white", high = "red")
+  scale_fill_gradient(low = "white", high = "red") +
+  labs(x = "Manchester City (home)", y = "Arsenal (away)",
+       caption = "<b>Figure 8. Probabilities of the expected goals in a match between Manchester City (home) and Arsenal <br>(away).</b>") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
 
+Based on the probabilities, we can easily sum the probabilities of all outcomes that meet our condition to determine the win/lose/draw result for the match between Manchester City (home) and Arsenal (away).
+
+```{r problem5_b_4, echo=FALSE}
 # calculate the overall probability
 win <- soccer_probs %>% 
   filter(man_city > arsenal) %>%
@@ -640,3 +766,46 @@ rownames(df) <- c("Manchester City win", "Manchester City lose", "Draw")
 
 kable(df)
 ```
+
+As an alternative approach, running a Monte Carlo simulation can also provide similar probabilities for the match between Manchester City (home) and Arsenal (away).
+
+```{r problem5_b_5, echo=FALSE}
+# Simulate lots of games
+NMC <- 100000
+man_city_goals <- rpois(NMC, lambda_man_city)
+arsenal_goals <- rpois(NMC, lambda_arsenal)
+
+# Compile the results
+results <- xtabs(~man_city_goals + arsenal_goals)
+
+# Monte Carlo estimates of probabilities
+win <- sum(man_city_goals > arsenal_goals) / NMC
+lose <- sum(man_city_goals < arsenal_goals) / NMC
+draw <- sum(man_city_goals == arsenal_goals) / NMC
+
+df <- data.frame(c(win, lose, draw))
+
+# rename
+colnames(df) <- c("Proabilities")
+rownames(df) <- c("Manchester City win", "Manchester City lose", "Draw")
+
+kable(df)
+```
+
+## Conclusion
+
+In conclusion, based on the statistical model, we can expect the following probabilities for the matches:
+
+- The probability of Liverpool winning as the home team against Tottenham as the away team is approximately 67.3%,
+- The probability of Liverpool losing the game is approximately 11.7%,
+- The probability of a draw is approximately 21.0%.
+
+For the match between Manchester City (home) and Arsenal (away):
+
+- The probability of Manchester City winning is approximately 77.9%,
+- The probability of losing the game is approximately 8.0%,
+- The probability of a draw is 14.1%.”
+
+The estimations above are obtained by running Monte Carlo simulations to provide the probabilities, ensuring that the sum of the three possible game results equals 1. All of these estimates are based on data from the 2018-19 English Premier League soccer season. This model is very simple and does not account for recent factors. Additionally, the model naively assumes that the performance of each team is independent, which may not be realistic. The extent to which the data from previous seasons can accurately predict outcomes is likely overly idealistic.
+
+_Note: This model is used only as a simple estimation of match results for the English Premier League soccer season and should not be used to make betting decisions. Any decisions made based on this model are at the user’s own risk._
