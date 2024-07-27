@@ -1,0 +1,642 @@
+---
+title: "homework02"
+output: pdf_document
+date: "2024-07-23"
+author: "zhewei xie"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries, include = FALSE, echo=FALSE}
+# load libraries.
+library(tidyverse)
+library(knitr)
+library(ggtext)
+```
+
+# Problem 1: Capital Metro UT Ridership
+
+```{r problem1_dataset, echo=FALSE}
+# read csv as data set.
+capmetro_UT = read.csv("../data/raw data/capmetro_UT.csv", header = TRUE)
+
+# Recode the categorical variables in sensible, rather than alphabetical, order
+capmetro_UT = mutate(capmetro_UT, 
+                     day_of_week = factor(day_of_week, 
+                                          levels=c("Mon", "Tue", "Wed","Thu", "Fri", "Sat", "Sun")),
+                     month = factor(month, 
+                                    levels=c("Sep", "Oct","Nov")))
+```
+
+## Question 1
+
+```{r problem1_a, echo=FALSE}
+capmetro_UT <- capmetro_UT %>%
+  group_by(hour_of_day, day_of_week, month) %>%
+  mutate(mean_boarding = mean(boarding))
+  
+ggplot(capmetro_UT) +
+  geom_line(aes(x = hour_of_day, y = mean_boarding, color = month)) +
+  scale_x_continuous(limits = c(6, 21), breaks = seq(6, 21, 2)) +
+  facet_wrap(~day_of_week, nrow = 3) +
+  ggtitle("Average boarding of Austin’s own Capital Metro bus network",
+          subtitle = "Facet by day of week") +
+  labs(x = "Hour of day (hours)", y = "Average boarding",
+       caption = "<b>Figure 1. The average boarding of Austin’s own Capital Metro bus network, faceted by day of the <br>week, is based on data from September to November 2018.</b> The hour of peak boardings saw a notable <br>decrease on weekends. Labor Day may have resulted in lower average boardings on Mondays in <br>September. Meanwhile, Thanksgiving Day may have lowered the average boardings on Wednesdays, <br>Thursdays, and Fridays in November.") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+## Question 2
+
+```{r problem1_b, echo=FALSE}
+ggplot(capmetro_UT) +
+  geom_point(aes(x = temperature, y = boarding, color = weekend), size = 0.1) +
+  # geom_smooth(aes(x = temperature, y = boarding), method = "lm") +
+  facet_wrap(~hour_of_day, nrow = 2) +
+  ggtitle("Boarding of Austin’s own Capital Metro bus network",
+          subtitle = "Facet by hour of day") +
+  labs(x = "Temperature (℉)", y = "Boarding",
+       caption = "<b>Figure 2. A scatter plot showing the average boardings of Austin’s Capital Metro bus network at <br>different temperatures, grouped by weekend status, and faceted by the hour of the day.</b> Temperature <br>does not have a noticeable effect on the number of UT students riding the bus, considering the hour of the <br>day and weekend status as constants.") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown()) +
+  theme(axis.text.x = element_text(size = 6))
+```
+
+\newpage
+
+# Problem 2: Wrangling the Billboard Top 100
+
+```{r problem2_dataset, echo=FALSE}
+billboard = read.csv("../data/raw data/billboard.csv", header = TRUE)
+```
+
+## Part A
+
+```{r problem2_a, echo=FALSE}
+top10 = billboard %>%
+  group_by(performer, song) %>%
+  mutate(count = n()) %>%
+  arrange(desc(count)) %>%
+  distinct(performer, song, pick("performer", "song", "count")) %>%
+  head(10)
+
+kable(top10,
+      caption = "The top 10 most popular songs since 1958, as measured by the total number of weeks that a song spent on the Billboard Top 100.")
+```
+
+\newpage
+
+## Part B
+
+```{r problem2_b, echo=FALSE}
+unique_songs <- billboard %>%
+  filter(year > 1958 & year < 2021) %>%
+  group_by(year) %>%
+  mutate(unique_count = n_distinct(song))
+
+ggplot(unique_songs) +
+  geom_line(aes(x = year, y = unique_count)) +
+  scale_x_continuous(limits = c(1958, 2021), breaks = seq(1959, 2020, 10)) +
+  ggtitle("Musical diversity during 1959-2020") +
+  labs(x = "Year", y = "Number of unique songs on the Billboard Top 100",
+       caption = "<b>Figure 3. The trend of musical diversity from 1959 to 2020.</b> The trend of musical diversity saw an <br>increase from 1959 to 1967, peaking in 1966 with 803 unique songs and in 1967 with 802 unique songs. <br>This was followed by a fluctuating decrease until 2004, reaching its lowest point at 384. It then increased <br>until 2011, followed by a dramatic decrease the next year. The trend increased again from 2014, reaching its <br>second peak in 2020 with 792 unique songs, which is still below the peak of the late 1960s.") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+## Part C
+
+```{r problem2_c, echo=FALSE}
+ten_week_hit <- billboard %>%
+  group_by(performer, song) %>%
+  mutate(count = n()) %>%
+  distinct(performer, song, pick("performer", "song", "count")) %>%
+  filter(count >= 10) %>%
+  group_by(performer) %>%
+  mutate(ten_week_hit_count = n()) %>%
+  distinct(performer, song, .keep_all = TRUE) %>%
+  filter(ten_week_hit_count >= 30) %>%
+  distinct(performer, pick("performer", "ten_week_hit_count"))
+
+ggplot(ten_week_hit) +
+  # use fct_reorder to order col: https://datavizpyr.com/re-ordering-bars-in-barplot-in-r/
+  geom_col(aes(x = fct_reorder(performer, ten_week_hit_count), y = ten_week_hit_count)) +
+  coord_flip() +
+  ggtitle("“Ten-week hit” since 1958") +
+  labs(x = "Performer", y = "Total “ten-week hit” songs",
+       caption = "<b>Figure 4. A barplot showing the performers who have had at least 30 songs that <br>were “ten-week hits” since 1958 to 2021.</b>") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+# Problem 3: regression practice
+
+```{r problem3_dataset, echo=FALSE}
+# read csv as data set.
+creatinine = read.csv("../data/raw data/creatinine.csv", header = TRUE)
+```
+
+## Question A
+
+```{r problem3_a_1, echo=FALSE}
+ggplot(creatinine) +
+  geom_point(aes(x = age, y = creatclear)) +
+  geom_abline(intercept = 147.8129158, slope = -0.6198159, color = 'red') +
+  scale_x_continuous(breaks = seq(15, 90, 15)) +
+  labs(x = "Age", y = "Creatine clearance rate (mL/minute)",
+    caption = "<b>Figure 5. creatine clearance rate versus age.</b>") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+```{r problem3_a_2, echo=FALSE}
+lm_creatinine = lm(creatclear ~ age, data = creatinine)
+table <- coef(lm_creatinine)
+
+df <- as.data.frame(table)
+
+rownames(df) <- c("intercept", "slope")
+colnames(df) <- c("value")
+
+kable(df,
+      caption = "The fitted linear model parameters of creatinine.")
+```
+
+Based on the fitted linear regression model parameter, it is clear that the linear regression is:  
+
+$\text{Clearance}=147.8129158-0.6198159\cdot\text{Age}$.  
+
+_Note: Based on the data from 18-year-old to 88-year-old._
+
+The linear regression gives the conditional expected value of creatinine clearance rate, given someone's age.  
+
+So let's plug in $\text{Age}=55$ into the fitted equation:  
+
+$E(\text{Clearance}|Age=55)=147.8129158-0.6198159\cdot55=113.723$  
+
+This is the exception of creatinine clearance rate for a 55-year-old, with the value is 113.723 mL/minute.
+
+\newpage
+
+## Question B
+
+```{r problem3_b, echo=FALSE, message=FALSE}
+df = data.frame(age = 15:90)
+df$predicted <- predict(lm_creatinine, newdata = df)
+
+n <- 19
+split_df <- split(df, ceiling(seq_along(df$age) / n))
+df <- bind_cols(split_df)
+
+colnames(df) <- c("age", "predicted", "age", "predicted", "age", "predicted", "age", "predicted")
+
+kable(df)
+
+# 147.8129158-0.6198159*40
+# 147.8129158-0.6198159*60
+```
+
+Based on the linear regression, it says that a one-year change in age is associated with a 0.6198159 mL/minute change in creatinine clearance rate, on average.
+
+\newpage
+
+## Question C
+
+Based on the fitted linear regression:  
+
+$\text{Clearance}=147.8129158-0.6198159\cdot\text{Age}$.  
+
+It is clear that $E(\text{Clearance}|Age=40)=147.8129158-0.6198159\cdot40=123.0203$  
+
+and $E(\text{Clearance}|Age=60)=147.8129158-0.6198159\cdot60=110.624$.  
+
+So for the 40-year-old, $\hat\varepsilon=y-\hat y=135-123.0203\approx12$,  
+
+while for the 60-year-old, $\hat\varepsilon=y-\hat y=112-110.624\approx1$.
+
+Therefore, based on the differences, the 40-year-old is healthier for the age.
+
+\newpage
+
+# Problem 4: probability practice
+
+## Part A
+
+Event A is defined as ‘you will get at least one lemon among the 3 cars you purchase.’ It is easier to consider the converse: getting no lemons among the 3 cars you purchase. To calculate this, you can imagine choosing 3 cars from 20 normal cars, while the probability space consists of choosing 3 cars from all 30 cars.
+
+```{r problem4_a, echo=FALSE, message=FALSE}
+# 1-choose(20, 3)/choose(30, 3)
+```
+
+$P(A)=1-P(\overline A)=1-\frac{\binom{20}{3}}{\binom{30}{3}}\approx0.719$
+
+## Part B
+
+### Question 1
+
+It is clear that:  
+
+$\text{odd}+\text{even}=\text{odd}\\\text{odd}+\text{odd}=\text{even}\\\text{even}+\text{even}=\text{even}$  
+
+so the numbers of a 1-6 dice could be split to 2 sets.
+
+$Set_{odd}=\{1, 3, 5\}$  
+
+$Set_{even}=\{2, 4, 6\}$  
+
+Event A is ‘the sum of the two numbers is odd.’ This event can be split into two steps. Step 1 is to choose one odd number from the set of odd numbers, and Step 2 is to choose one even number from the set of even numbers. Interestingly, we could choose from the odd set first or the even set first, and it does not affect the sum. Meanwhile, the probability space is clearly the random selection of 2 numbers from 1 to 6.
+
+$P(A)=\frac{\binom{3}{1}\binom{3}{1}2!}{\binom{6}{2}}$
+
+### Question 2
+
+$x+y\leq7$
+
+```{r problem4_b_1, echo=FALSE}
+x <- seq(1, 6)
+y <- seq(1, 6)
+
+dice2 <- expand.grid(x = x, y = y)
+
+ggplot(dice2) +
+  xlim(1, 6) + ylim(1, 6) +
+  scale_x_continuous(limits = c(1, 6), breaks = seq(1, 6, 1)) +
+  scale_y_continuous(limits = c(1, 6), breaks = seq(1, 6, 1)) +
+  geom_point(aes(x = x, y = y, color = ifelse((x + y) %% 2 == 0, 'even', 'odd'))) +
+  geom_abline(intercept = 7, slope = -1, color = "blue") +
+  labs(x = "First dice number", y = "Second dice number")
+```
+
+```{r problem4_b_2, echo=FALSE}
+cal_dice_number <- function(start_n = 1, end_n = 6, upper_n = 7, 
+                            include_odd = 1, include_even = 1) {
+  x = seq(start_n, end_n)
+  
+  n = 0
+  
+  for (i in x) {
+    for (j in x) {
+      s = i + j
+      
+      if (s < upper_n) {
+        is_odd = s %% 2 != 0
+        if (include_odd && is_odd) n <- n + 1
+        if (include_even && !is_odd) n <- n + 1
+      }
+    }
+  }
+  
+  return(n)
+}
+
+print(cal_dice_number(1, 6, 7))
+```
+
+Through counting the case, the probability that the sum of the two numbers is less than 7 is $\frac{15}{36}$.
+
+### Question 3
+
+Event A is "the sum of the two numbers is less than 7".  
+
+Event B is "the sum of the two numbers is odd".  
+
+So $P(A|B)=\frac{P(AB)}{P(B)}$.
+
+Given that there are 6 cases where the sum of the two numbers is less than 7 and odd, and there are 18 cases where the sum of the two numbers is odd, the probability that the sum of the two numbers is less than 7, given that it is odd, is $\frac{6}{18}$.
+
+## Part C
+
+Let's donate the event "Random clicker" as RC, the event "Truth clicker" as TC, the event "answer yes" as Y, the event "answer no" as N.  
+
+$P(Y)=P(Y|RC)\cdot P(RC)+P(Y|TC)\cdot P(TC)$  
+
+Given the expected fraction of random clickers is 0.3, it means that $P(RC)=0.3$, so $P(TC)=1-P(\overline {TC})=1-P(RC)=1-0.3=0.7$.  
+
+Besides, because random clickers would click either one with equal probability, which means $P(Y|RC)=P(N|RC)=0.5$ and the following survey results: 65% said Yes and 35% said No.  
+
+Therefore, $P(Y)=P(Y|RC)\cdot P(RC)+P(Y|TC)\cdot P(TC)=0.5\cdot0.3+P(Y|TC)\cdot0.7=0.65$, it is clear that $P(Y|TC)=\frac{P(Y)-P(Y|RC)\cdot P(RC)}{P(TC)}=\frac{0.65-0.5\cdot0.3}{0.7}\approx0.714$.
+
+## Part D
+
+Let's donate the event "someone has the disease" as D, the event "test positive" as TP.
+
+Because someone has the disease, there is a probability of 0.993 that they will test positive, it is clear that $P(TP|D)=0.993$.  
+
+Additionally, if someone does not have the disease, there is a 0.9999 probability that they will test negative, which means $P(\overline {TP}|\overline D)=0.9999$ and $P(TP|\overline D)=1-P(\overline {TP}|\overline D)=0.0001$.  
+
+In the general population, incidence of the disease is reasonably rare: about 0.0025% of all people have it, which means $P(D)=0.000025$ and $P(\overline D)=1-P(\overline D)=0.999975$.  
+
+$P(TP)=P(TP|D)\cdot P(D)+P(TP|\overline D)\cdot P(\overline D)=0.993\cdot0.000025+0.0001\cdot0.999975=0.0001248225$
+
+According to Bayes’ theorem, $P(D|TP)=\frac{P(TP|D)\cdot P(D)}{P(TP)}=\frac{0.993\cdot0.000025}{0.0001248225}\approx0.1989$.
+
+## Part E
+
+Let's donate the event "an aircraft is present in a certain area" as A, the event "a radar correctly registers its presence" as R.  
+
+$P(R|A)=0.99$  
+$P(R|\overline A)=0.10$  
+$P(A)=0.05$ and $P(\overline A)=1-P(A)=0.95$  
+
+Because $P(R)=P(R|A)\cdot P(A)+P(R|\overline A)\cdot P(\overline A)=0.99\cdot0.05+0.10\cdot0.95=0.1445$.  
+
+According to Bayes’ theorem, $P(A|R)=\frac{P(R|A)\cdot P(A)}{P(R)}=\frac{0.99\cdot0.05}{0.1445}\approx0.3426$
+
+# Problem 5: modeling soccer games with the Poisson distribution
+
+```{r problem5_dataset, echo=FALSE}
+away = read.csv("../data/raw data/epl_2018_19_away.csv", header = TRUE)
+home = read.csv("../data/raw data/epl_2018_19_home.csv", header = TRUE)
+```
+
+```{r problem5_0, echo=FALSE}
+avg_goals = (sum(home$GF) + sum(home$GA)) / 20
+baseline_home = avg_home_per_game = sum(home$GF) / (19 * 20)
+baseline_away = avg_away_per_game = sum(away$GF) / (19 * 20)
+
+# We also need two other pieces of information: the
+# average number of goals scored per match by a home
+# team up till now and the average number scored by an
+# away team.
+home <- home %>%
+  mutate(attack_strength = GF / avg_goals) %>%
+  mutate(defence_weakness = GA / avg_goals)
+away <- away %>%
+  mutate(attack_strength = GF / avg_goals) %>%
+  mutate(defence_weakness = GA / avg_goals)
+
+# merge table
+merged_goals <- full_join(home, away, by = "Team", suffix = c(".home", ".away"))
+
+merged_goals <- merged_goals %>%
+  mutate(
+    GP = coalesce(GP.home, 0) + coalesce(GP.away, 0),
+    GF = coalesce(GF.home, 0) + coalesce(GF.away, 0),
+    GA = coalesce(GA.home, 0) + coalesce(GA.away, 0)
+  ) %>%
+  select(Team, GP, GF, GA)
+
+merged_goals <- merged_goals %>%
+  mutate(attack_strength = merged_goals$GF / avg_goals) %>%
+  mutate(defence_weakness = merged_goals$GA / avg_goals)
+
+attack_strength <- merged_goals$GF / avg_goals
+defence_weakness <- merged_goals$GA / avg_goals
+```
+
+```{r echo=FALSE}
+# sum(home$GF)
+# sum(home$GA)
+# sum(away$GF)
+# sum(away$GA)
+
+# sum(merged_goals$GF)
+# sum(merged_goals$GA)
+# (sum(home$GF) + sum(home$GA))
+# 
+# (sum(home$GF) + sum(home$GA)) / 20
+# mean(home$GF) + mean(home$GA)
+# sum(home$GF) / (19 * 20)
+# sum(away$GF) / (19 * 20)
+# mean(home$GF) / 19
+```
+
+**Question: ** 
+
+What are the estimated probabilities of win, lose, and draw results for a match between Liverpool (home) and Tottenham (away), and a match between Manchester City (home) and Arsenal (away)?
+
+**Approach: **
+
+Step 1:  
+
+The article ["One match to go!", by Spiegelhalter and Ng](https://faculty.chicagobooth.edu/nicholas.polson/teaching/41000/speigelhalter-epl.pdf) provides an algorithm to evaluate the ‘attack strength’ and ‘defence weakness’ of a team in a season.  
+
+$\text{Attack Strength}=\frac{\text{\‘goals for\’ of the team}}{\text{the average number of goals scored by a team}}$  
+
+$\text{Defence Weakness}=\frac{\text{\‘goals against\’ of the team}}{\text{the average number of goals scored by a team}}$  
+
+To use this algorithm, let’s define the ‘average number of goals scored by a team’ as $\text{avg\_goals}$, the "'goals against' of team i" as $\text{GF}_i$, and the "'goals against' of team i" as $\text{GA}_i$.
+
+So, using the algorithm and data, we can calculate:  
+
+$\text{avg\_goals}=\frac{\sum_{i=1}^{20}(\text{GF}_i+\text{GA}_i)}{20}=53.6$  
+
+_Note: 20 is the number of the teams of the League._
+
+By examining the data from ‘epl_2018-19_away.csv’ and ‘epl_2018-19_home.csv,’ it is clear that the goals are categorized into two classes: home team goals and away team goals. Therefore, the following can be established:  
+
+$\text{GF}=\text{GF}_{home}+\text{GF}_{away}$
+
+$\text{GA}=\text{GA}_{home}+\text{GA}_{away}$
+
+_Note: We should merge the two tables carefully because the order of teams in the tables is different. We should merge them using the key ‘Team.’_
+
+After merging the two files by the key ‘Team’ and summing the GF and GA from the merged file, it is easy to use R to calculate each team’s ‘attack strength’ and ‘defence weakness’ with the appropriate function.
+
+Step 2:  
+
+According to the article, it is also important to calculate the average goals per game as a baseline, categorized by goals scored by the home team and by the away team.
+
+Since the attribute named ‘GP’ stands for ‘games played,’ it is clear that each team played 19 games as the home team and 19 games as the away team. Therefore, the total number of games is $19\cdot20=380$.
+
+Let’s denote the ‘average goals scored by home teams’ as $\text{avg\_goals\_per\_game}_{home}$, denote the "average goals scored by away team" as $\text{avg\_goals\_per\_game}_{away}$.
+
+$\text{GF}_i$ represent the ‘goals for’ by team $i$ as the home team, while $\text{GA}_i$ represents the ‘goals against’ team $i$ as the home team". Since each goal scored as ‘goals against’ for a home team is the same as ‘goals for’ for the away team, it follows that:  
+
+$\text{baseline}_{home}=\text{avg\_goals\_per\_game}_{home}=\frac{\sum_{i=1}^{20}\text{GF}_i}{19\cdot20}\approx1.568421$
+
+$\text{baseline}_{away}=\text{avg\_goals\_per\_game}_{away}=\frac{\sum_{i=1}^{20}\text{GA}_i}{19\cdot20}\approx1.252632$
+
+Step 3:  
+
+According to the method outlined in the article, the expected goals for a home team are:  
+
+$\text{goals}=\text{baseline}_{home}\cdot\text{attack\_strength}_{home}\cdot\text{defence\_weakness}_{away}$
+
+And the expected goals of an away team are:  
+
+$\text{goals}=\text{baseline}_{away}\cdot\text{attack\_strength}_{away}\cdot\text{defence\_weakness}_{home}$
+
+Step 4:  
+
+The goals scored by teams are modeled using a Poisson distribution, based on the independence of each game, ‘attack strength’ and ‘defence weakness’. And the scores of a team do not give us additional information about the performance of another team.   
+
+Firstly, the number of goals in a game $\text{goals}$ is modeled as $\lambda$. Then, the probability $P(X = x)$ represents the likelihood of the target team scoring exactly $x$ goals.  
+
+According to the Poisson distribution:  
+
+$P(X=x)=\frac{\lambda^x}{x!}\cdot e^{-x}$
+
+Given that the goals scored by each team are independent, the joint probability for a match is:  
+
+$P(X=x,Y=y)=\frac{\lambda^x}{x!}\cdot e^{-x}\cdot\frac{\lambda^y}{y!}\cdot e^{-y}$
+
+## Question 1
+
+```{r problem5_a_1, echo=FALSE}
+# Liverpool (home) vs. Tottenham (away)
+liverpool_home_attack_strength <- (merged_goals[merged_goals$Team == "Liverpool", ])$attack_strength
+liverpool_home_defence_weakness <- (merged_goals[merged_goals$Team == "Liverpool", ])$defence_weakness
+tottenham_away_attack_strength <- (merged_goals[merged_goals$Team == "Tottenham", ])$attack_strength
+tottenham_away_defence_weakness <- (merged_goals[merged_goals$Team == "Tottenham", ])$defence_weakness
+
+# Calculate lambda values
+lambda_liverpool_win <- baseline_home * liverpool_home_attack_strength * tottenham_away_defence_weakness
+lambda_liverpool_lose <- baseline_away * liverpool_home_defence_weakness * tottenham_away_attack_strength
+```
+
+Following the approach outlined above, we can calculate the result of each match. For example, for the match between Liverpool (home) and Tottenham (away), to determine the probability of a 1-0 result, which is the most likely outcome, we multiply 31.6% by 48.3% to get 15.3%.
+
+```{r problem5_a_2, echo=FALSE}
+liverpool_vs_tottenham_probs = tibble(k = 0:6)
+liverpool_vs_tottenham_probs = liverpool_vs_tottenham_probs %>%
+  mutate(liverpool = dpois(k, lambda = lambda_liverpool_win)) %>%
+  mutate(tottenham = dpois(k, lambda = lambda_liverpool_lose))
+
+kable(liverpool_vs_tottenham_probs)
+```
+
+``` {r echo=FALSE}
+# dpois(0, 1.40*0.85*0.52)
+# dpois(2, 1.08*1.46*1.37)
+# 
+# dpois(1, (merged_goals[merged_goals$Team == "Liverpool", ])$attack_strength)
+# dpois(0, (merged_goals[merged_goals$Team == "Tottenham", ])$defence_weakness)
+```
+
+```{r problem5_a_3, echo=FALSE}
+# draw heat plot
+soccer_scores = tibble(liverpool = 0:6, tottenham = 0:6)
+
+soccer_probs = soccer_scores %>%
+  tidyr::expand(liverpool, tottenham) %>%
+  mutate(prob = dpois(liverpool, lambda_liverpool_win) * dpois(tottenham, lambda_liverpool_lose))
+
+ggplot(soccer_probs) + 
+  geom_tile(aes(x = liverpool, y = tottenham, fill = prob)) +
+  geom_text(aes(x = liverpool, y = tottenham, label=round(prob, 3)), color='darkblue') + 
+  scale_fill_gradient(low = "white", high = "red")
+
+# calculate the overall probability
+win <- soccer_probs %>% 
+  filter(liverpool > tottenham) %>%
+  summarize(prob = sum(prob)) %>% 
+  pull(prob)
+
+lose <- soccer_probs %>% 
+  filter(liverpool < tottenham) %>%
+  summarize(prob = sum(prob)) %>% 
+  pull(prob)
+
+draw <- soccer_probs %>% 
+  filter(liverpool == tottenham) %>%
+  summarize(prob = sum(prob)) %>% 
+  pull(prob)
+
+df <- data.frame(c(win, lose, draw))
+
+# rename
+colnames(df) <- c("Proabilities")
+rownames(df) <- c("Liverpool win", "Liverpool lose", "Draw")
+
+kable(df)
+```
+
+```{r problem5_a_4, echo=FALSE}
+# Simulate lots of games
+NMC <- 100000
+liverpool_goals <- rpois(NMC, lambda_liverpool_win)
+tottenham_goals <- rpois(NMC, lambda_liverpool_lose)
+
+# Compile the results
+results <- xtabs(~liverpool_goals + tottenham_goals)
+
+# Monte Carlo estimates of probabilities
+win <- sum(liverpool_goals > tottenham_goals) / NMC
+lose <- sum(liverpool_goals < tottenham_goals) / NMC
+draw <- sum(liverpool_goals == tottenham_goals) / NMC
+
+df <- data.frame(c(win, lose, draw))
+
+# rename
+colnames(df) <- c("Proabilities")
+rownames(df) <- c("Liverpool win", "Liverpool lose", "Draw")
+
+kable(df)
+```
+
+## Question 2
+
+```{r problem5_3, echo=FALSE}
+# Manchester City ( (home) vs. Arsenal (away)
+man_city_home_attack_strength <- (merged_goals[merged_goals$Team == "Manchester City", ])$attack_strength
+man_city_home_defence_weakness <- (merged_goals[merged_goals$Team == "Manchester City", ])$defence_weakness
+arsenal_away_attack_strength <- (merged_goals[merged_goals$Team == "Arsenal", ])$attack_strength
+arsenal_away_defence_weakness <- (merged_goals[merged_goals$Team == "Arsenal", ])$defence_weakness
+
+# Calculate lambda values
+lambda_man_city_win <- baseline_home * man_city_home_attack_strength * arsenal_away_defence_weakness
+lambda_man_city_lose <- baseline_away * man_city_home_defence_weakness * arsenal_away_attack_strength
+
+# Simulate lots of games
+NMC <- 100000
+man_city_goals <- rpois(NMC, lambda_man_city_win)
+arsenal_goals <- rpois(NMC, lambda_man_city_lose)
+
+# Compile the results
+results <- xtabs(~man_city_goals + arsenal_goals)
+
+# Monte Carlo estimates of probabilities
+win <- sum(man_city_goals > arsenal_goals) / NMC
+lose <- sum(man_city_goals < arsenal_goals) / NMC
+draw <- sum(man_city_goals == arsenal_goals) / NMC
+
+df <- data.frame(c(win, lose, draw))
+
+# rename
+colnames(df) <- c("Proabilities")
+rownames(df) <- c("Manchester City win", "Manchester City lose", "Draw")
+
+kable(df)
+```
+
+```{r problem5_4, echo=FALSE}
+# draw heat plot
+soccer_scores = tibble(man_city = 0:6, arsenal = 0:6)
+
+soccer_probs = soccer_scores %>%
+  tidyr::expand(man_city, arsenal) %>%
+  mutate(prob = dpois(man_city, lambda_man_city_win) * dpois(arsenal, lambda_man_city_lose))
+
+ggplot(soccer_probs) + 
+  geom_tile(aes(x = man_city, y = arsenal, fill = prob)) +
+  geom_text(aes(x = man_city, y = arsenal, label=round(prob, 3)), color='darkblue') + 
+  scale_fill_gradient(low = "white", high = "red")
+
+# calculate the overall probability
+win <- soccer_probs %>% 
+  filter(man_city > arsenal) %>%
+  summarize(prob = sum(prob)) %>% 
+  pull(prob)
+
+lose <- soccer_probs %>% 
+  filter(man_city < arsenal) %>%
+  summarize(prob = sum(prob)) %>% 
+  pull(prob)
+
+draw <- soccer_probs %>% 
+  filter(man_city == arsenal) %>%
+  summarize(prob = sum(prob)) %>% 
+  pull(prob)
+
+df <- data.frame(c(win, lose, draw))
+
+# rename
+colnames(df) <- c("Proabilities")
+rownames(df) <- c("Manchester City win", "Manchester City lose", "Draw")
+
+kable(df)
+```

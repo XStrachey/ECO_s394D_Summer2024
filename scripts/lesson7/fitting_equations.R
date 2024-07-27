@@ -114,7 +114,7 @@ ggplot(animals) +
   geom_point(aes(x = log(body), y = log(brain))) +
   geom_abline(intercept = 2.2, slope = 0.75, color = 'red')
 
-lm_critters = lm(log(brain) ~log(body), data = animals)
+lm_critters = lm(log(brain) ~ log(body), data = animals)
 coef(lm_critters)
 # (Intercept)   log(body) 
 # 2.2049405   0.7500543 
