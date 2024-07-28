@@ -810,7 +810,7 @@ For the match between Manchester City (home) and Arsenal (away):
 
 - The probability of Manchester City winning is approximately 78%,
 - The probability of losing the game is approximately 8%,
-- The probability of a draw is 14%.”
+- The probability of a draw is approximately 14%.”
 
 The estimations above are obtained by running Monte Carlo simulations (100,000 times) for each match to provide the probabilities, ensuring that the sum of the three possible game results equals 1. All of these estimates are based on data from the 2018-19 English Premier League soccer season. This model is very simple and does not account for recent factors. Additionally, the model naively assumes that the performance of each team is independent, which may not be realistic. The extent to which the data from previous seasons can accurately predict outcomes is likely overly idealistic.
 
