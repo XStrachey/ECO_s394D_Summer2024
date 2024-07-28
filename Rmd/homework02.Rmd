@@ -619,7 +619,8 @@ df <- data.frame(c(win, lose, draw))
 colnames(df) <- c("Proabilities")
 rownames(df) <- c("Liverpool win", "Liverpool lose", "Draw")
 
-kable(df)
+kable(df,
+      caption = "The probabilities of win/lose/draw results for a match between Liverpool (home) and Tottenham (away), based on the PMF of a Poisson distribution.")
 ```
 
 As an alternative approach, running a Monte Carlo simulation can also provide similar probabilities for the match between Liverpool (home) and Tottenham (away).
@@ -644,7 +645,8 @@ df <- data.frame(c(win, lose, draw))
 colnames(df) <- c("Proabilities")
 rownames(df) <- c("Liverpool win", "Liverpool lose", "Draw")
 
-kable(df)
+kable(df,
+      caption = "The probabilities of win/lose/draw results for a match between Liverpool (home) and Tottenham (away), based on using Monte Carlo simulation.")
 ```
 
 \newpage
@@ -766,7 +768,8 @@ df <- data.frame(c(win, lose, draw))
 colnames(df) <- c("Proabilities")
 rownames(df) <- c("Manchester City win", "Manchester City lose", "Draw")
 
-kable(df)
+kable(df,
+      caption = "The probabilities of win/lose/draw results for a match between Manchester City (home) and Arsenal (away), based on the PMF of a Poisson distribution.")
 ```
 
 As an alternative approach, running a Monte Carlo simulation can also provide similar probabilities for the match between Manchester City (home) and Arsenal (away).
@@ -791,23 +794,24 @@ df <- data.frame(c(win, lose, draw))
 colnames(df) <- c("Proabilities")
 rownames(df) <- c("Manchester City win", "Manchester City lose", "Draw")
 
-kable(df)
+kable(df,
+      caption = "The probabilities of win/lose/draw results for a match between Manchester City (home) and Arsenal (away), based on using Monte Carlo simulation.")
 ```
 
 ## Conclusion
 
 In conclusion, based on the statistical model, we can expect the following probabilities for the matches:
 
-- The probability of Liverpool winning as the home team against Tottenham as the away team is approximately 67.3%,
-- The probability of Liverpool losing the game is approximately 11.7%,
-- The probability of a draw is approximately 21.0%.
+- The probability of Liverpool winning as the home team against Tottenham as the away team is approximately 67%,
+- The probability of Liverpool losing the game is approximately 12%,
+- The probability of a draw is approximately 21%.
 
 For the match between Manchester City (home) and Arsenal (away):
 
-- The probability of Manchester City winning is approximately 77.9%,
-- The probability of losing the game is approximately 8.0%,
-- The probability of a draw is 14.1%.”
+- The probability of Manchester City winning is approximately 78%,
+- The probability of losing the game is approximately 8%,
+- The probability of a draw is 14%.”
 
-The estimations above are obtained by running Monte Carlo simulations to provide the probabilities, ensuring that the sum of the three possible game results equals 1. All of these estimates are based on data from the 2018-19 English Premier League soccer season. This model is very simple and does not account for recent factors. Additionally, the model naively assumes that the performance of each team is independent, which may not be realistic. The extent to which the data from previous seasons can accurately predict outcomes is likely overly idealistic.
+The estimations above are obtained by running Monte Carlo simulations (100,000 times) for each match to provide the probabilities, ensuring that the sum of the three possible game results equals 1. All of these estimates are based on data from the 2018-19 English Premier League soccer season. This model is very simple and does not account for recent factors. Additionally, the model naively assumes that the performance of each team is independent, which may not be realistic. The extent to which the data from previous seasons can accurately predict outcomes is likely overly idealistic.
 
 _Note: This model is used only as a simple estimation of match results for the English Premier League soccer season and should not be used to make betting decisions. Any decisions made based on this model are at the user’s own risk._
