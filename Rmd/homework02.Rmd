@@ -500,9 +500,9 @@ According to the Poisson distribution:
 
 $P(X=x)=\frac{\lambda^x}{x!}e^{-\lambda}$
 
-Given that the expected goals scored by each team are independent, the joint probability for a match is:  
+Given that the expected goals scored by each team are independent, and denoting the expected goals scored by the home team as $X$ and the expected goals scored by the away team as $Y$, the joint probability for a match is:  
 
-$P(X=x,Y=y)=\frac{\lambda_1^x}{x!}e^{-\lambda_1}\times\frac{\lambda_2^y}{y!}e^{-\lambda_2}$
+$P(X=x,Y=y)=\frac{\lambda_X^x}{x!}e^{-\lambda_X}\times\frac{\lambda_Y^y}{y!}e^{-\lambda_Y}$
 
 \newpage
 
@@ -532,19 +532,19 @@ lambda_tottenham = tottenham_expected_goals
 # lambda_tottenham
 ```
 
-Following the approach outlined above, we can calculate the result of each match. For example, for the match between Liverpool (home) and Tottenham (away), to determine the probability of a 2-1 result, we multiply 27% by 34% to get approximately 9%, as demonstrated by the following calculation steps:
+Following the approach outlined above, we can calculate the result of each match. For example, for the match between Liverpool (home) and Tottenham (away), to determine the probability of a 2-1 result, we multiply 27.0% by 33.8% to get approximately 9.1%, as demonstrated by the following calculation steps:
 
 $\because$
 
-$\lambda_{{\text{Liverpool}}_{win}}=\text{baseline}_{\text{home}}\times\text{AttackStrength}_\text{Liverpool}\times\text{DefenceWeakness}_\text{Tottenham}$
+$\lambda_{\text{excpect goals}_{\text{Liverpool}}}=\text{baseline}_{\text{home}}\times\text{AttackStrength}_\text{Liverpool}\times\text{DefenceWeakness}_\text{Tottenham}$
 
-$\lambda_{{\text{Liverpool}}_{lose}}=\text{baseline}_{\text{away}}\times\text{AttackStrength}_\text{Tottenham}\times\text{DefenceWeakness}_\text{Liverpool}$
+$\lambda_{\text{excpect goals}_{\text{Tottenham}}}=\text{baseline}_{\text{away}}\times\text{AttackStrength}_\text{Tottenham}\times\text{DefenceWeakness}_\text{Liverpool}$
 
 $\therefore$
 
-$\lambda_{{\text{Liverpool}}_{win}}=1.568421\times1.660448\times0.7276119\approx1.89$
+$\lambda_{\text{excpect goals}_{\text{Liverpool}}}=1.568421\times1.660448\times0.7276119\approx1.89$
 
-$\lambda_{{\text{Liverpool}}_{lose}}=1.252632\times1.25\times0.4104478\approx0.64$
+$\lambda_{\text{excpect goals}_{\text{Tottenham}}}=1.252632\times1.25\times0.4104478\approx0.64$
 
 $P(X=2,Y=1)=\frac{1.89^2}{2!}e^{-1.89}\times\frac{0.64^1}{1!}e^{-0.64}\approx0.2698\times0.3375\approx0.091$
 
@@ -681,19 +681,19 @@ lambda_arsenal = arsenal_expected_goals
 # dpois(2, lambda=lambda_man_city) * dpois(1, lambda=lambda_arsenal)
 ```
 
-Following the approach outlined above, we can calculate the result of each match. For example, for the match between Manchester City (home) and Arsenal (away), to determine the probability of a 2-1 result, we multiply 27% by 34% to get approximately 9%, as demonstrated by the following calculation steps:
+Following the approach outlined above, we can calculate the result of each match. For example, for the match between Manchester City (home) and Arsenal (away), to determine the probability of a 2-1 result, we multiply 24.8% by 35.2% to get approximately 8.7%, as demonstrated by the following calculation steps:
 
 $\because$
 
-$\lambda_{{\text{Manchester City}}_{win}}=\text{baseline}_{\text{home}}\times\text{AttackStrength}_\text{Manchester City}\times\text{DefenceWeakness}_\text{Arsenal}$
+$\lambda_{\text{excpect goals}_{\text{Manchester City}}}=\text{baseline}_{\text{home}}\times\text{AttackStrength}_\text{Manchester City}\times\text{DefenceWeakness}_\text{Arsenal}$
 
-$\lambda_{{\text{Manchester City}}_{lose}}=\text{baseline}_{\text{away}}\times\text{AttackStrength}_\text{Arsenal}\times\text{DefenceWeakness}_\text{Manchester City}$
+$\lambda_{\text{excpect goals}_{\text{Arsenal}}}=\text{baseline}_{\text{away}}\times\text{AttackStrength}_\text{Arsenal}\times\text{DefenceWeakness}_\text{Manchester City}$
 
 $\therefore$
 
-$\lambda_{{\text{Manchester City}}_{win}}=1.568421\times1.772388\times0.9514925\approx2.65$
+$\lambda_{\text{excpect goals}_{\text{Manchester City}}}=1.568421\times1.772388\times0.9514925\approx2.65$
 
-$\lambda_{{\text{Manchester City}}_{lose}}=1.252632\times1.36194\times0.4291045\approx0.73$
+$\lambda_{\text{excpect goals}_{\text{Arsenal}}}=1.252632\times1.36194\times0.4291045\approx0.73$
 
 $P(X=2,Y=1)=\frac{2.65^2}{2!}e^{-2.65}\times\frac{0.73^1}{1!}e^{-0.73}\approx0.2481\times0.3518\approx0.087$
 
