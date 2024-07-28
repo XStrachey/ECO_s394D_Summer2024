@@ -44,7 +44,7 @@ ggplot(capmetro_UT) +
   ggtitle("Average boarding of Austin’s own Capital Metro bus network",
           subtitle = "Facet by day of week") +
   labs(x = "Hour of day (hours)", y = "Average boarding",
-       caption = "<b>Figure 1. The average boarding of Austin’s own Capital Metro bus network, faceted by day of the <br>week, is based on data from September to November 2018.</b> The hour of peak boardings saw a notable <br>decrease on weekends. Labor Day may have resulted in lower average boardings on Mondays in <br>September. Meanwhile, Thanksgiving Day may have lowered the average boardings on Wednesdays, <br>Thursdays, and Fridays in November.") +
+       caption = "<b>Figure 1. The average boarding of Austin’s own Capital Metro bus network, faceted by day of the <br>week, is based on data from September to November 2018.</b> Peak hours on weekdays are generally <br>consistent, with the peak period from Monday to Thursday being roughly from 2 PM to 7 PM. On Fridays, <br>the peak hours start and end about an hour earlier. Meanwhile, the passenger average boarding distribution <br>on weekends shows significant differences compared to weekdays. Overall passenger average boarding is <br>lower on weekends, and there is no distinct single peak in passenger volume. What's more, Labor Day may <br>have resulted in lower average boardings on Mondays in September. Meanwhile, Thanksgiving Day may <br>have lowered the average boardings on Wednesdays, Thursdays, and Fridays in November.") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown()) +
   scale_color_brewer(type = "qual")
@@ -59,7 +59,7 @@ ggplot(capmetro_UT) +
   facet_wrap(~hour_of_day, nrow = 2) +
   ggtitle("Boarding of Austin’s own Capital Metro bus network",
           subtitle = "Facet by hour of day") +
-  labs(x = "Temperature (℉)", y = "Boarding",
+  labs(x = "Temperature (℉)", y = "Boarding", color = "weekend status",
        caption = "<b>Figure 2. A scatter plot showing the average boardings of Austin’s Capital Metro bus network at <br>different temperatures, grouped by weekend status, and faceted by the hour of the day.</b> Temperature <br>does not have a noticeable effect on the number of UT students riding the bus, considering the hour of the <br>day and weekend status as constants.") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown()) +
@@ -86,7 +86,7 @@ top10 = billboard %>%
   head(10)
 
 kable(top10,
-      caption = "The top 10 most popular songs since 1958, as measured by the total number of weeks that a song spent on the Billboard Top 100.")
+      caption = "The top 10 most popular songs since 1958, as measured by the total number of weeks that a song spent on the Billboard Top 100. The data contains every song to appear on the weekly Billboard Top 100 chart since 1958, up through the middle of 2021.")
 ```
 
 \newpage
