@@ -203,7 +203,7 @@ kable(df,
 # 147.8129158-0.6198159*60
 ```
 
-Based on the linear regression, it says that a one-year change in age is associated with a 0.62 mL/minute change in creatinine clearance rate, on average.
+Based on the linear regression, a one-year increase in age is associated with an average decrease of 0.62 mL/minute in the creatinine clearance rate.
 
 ## Question C
 
@@ -279,7 +279,7 @@ ggplot(dice2) +
   scale_y_continuous(limits = c(1, 6), breaks = seq(1, 6, 1)) +
   geom_point(aes(x = x, y = y, color = ifelse((x + y) %% 2 == 0, 'even', 'odd'))) +
   geom_abline(intercept = 7, slope = -1, color = "blue") +
-  labs(x = "First dice number", y = "Second dice number", color = "Parity",
+  labs(x = "First dice number", y = "Second dice number", color = "Parity of Sum",
        caption = "<b>Figure 6. The event space of throwing two dice (each with the usual 6 sides, numbered 1-6).</b>") +
   scale_color_brewer(type = "qual") +
   theme(plot.caption = element_text(hjust = 0)) + 
@@ -459,7 +459,7 @@ merged_goals <- merged_goals %>%
 
 According to the article, it is also important to calculate the average goals per game as a baseline, categorized by goals scored by home teams and by away teams.
 
-Since the attribute named ‘GP’ stands for ‘games played,’ it is clear that each team played 19 games as the home team and 19 games as the away team. Therefore, the total number of games is $19\cdot20=380$. 380 games have been played with 1072 goals: 596 scored by home teams (average approximately 1.57 per game); 476 by away teams (average approximately 1.25 per game).
+Since the attribute named ‘GP’ stands for ‘games played,’ it is clear that each team played 19 games as the home team and 19 games as the away team. Therefore, the total number of games is $(19\times20\times2)/2=380$. 380 games have been played with 1072 goals: 596 scored by home teams (average approximately 1.57 per game); 476 by away teams (average approximately 1.25 per game).
 
 ```{r problem5_3, echo=FALSE}
 # sum(home$GF)
@@ -570,7 +570,7 @@ wide_data <- as.data.frame(wide_data)
 colnames(wide_data) <- c("Team", "Expected goals", "0 (%)", "1 (%)", "2 (%)", "3 (%)", "4 (%)", "5 (%)", "6 (%)")
 
 kable(wide_data,
-      caption = "Expected number of goals, and percentage chance of getting a particular score for the two teams (Liverpool (home) versus Tottenham (away)), assuming a Poisson distribution")
+      caption = "Expected number of goals, and percentage chance of getting a particular score for the two teams (Liverpool (home) versus Tottenham (away)), assuming a Poisson distribution.")
 ```
 
 To calculate probabilities using the Poisson distribution, we can use the dpois function in R. To estimate the probabilities of each possible match result, we multiply the Poisson probabilities of the two competing teams together, assuming independence. Creating a heat map to visualize these probabilities is also a useful approach.  
@@ -719,7 +719,7 @@ wide_data <- as.data.frame(wide_data)
 colnames(wide_data) <- c("Team", "Expected goals", "0 (%)", "1 (%)", "2 (%)", "3 (%)", "4 (%)", "5 (%)", "6 (%)")
 
 kable(wide_data,
-      caption = "Expected number of goals, and percentage chance of getting a particular score for the two teams (Manchester City (home) versus Arsenal (away)), assuming a Poisson distribution")
+      caption = "Expected number of goals, and percentage chance of getting a particular score for the two teams (Manchester City (home) versus Arsenal (away)), assuming a Poisson distribution.")
 ```
 
 Using the same approach as in the previous question, we calculate the joint probabilities for the match between Manchester City (home) and Arsenal (away) and represent the results as a heat map.
