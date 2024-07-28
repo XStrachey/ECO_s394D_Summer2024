@@ -46,7 +46,8 @@ ggplot(capmetro_UT) +
   labs(x = "Hour of day (hours)", y = "Average boarding",
        caption = "<b>Figure 1. The average boarding of Austin’s own Capital Metro bus network, faceted by day of the <br>week, is based on data from September to November 2018.</b> The hour of peak boardings saw a notable <br>decrease on weekends. Labor Day may have resulted in lower average boardings on Mondays in <br>September. Meanwhile, Thanksgiving Day may have lowered the average boardings on Wednesdays, <br>Thursdays, and Fridays in November.") +
   theme(plot.caption = element_text(hjust = 0)) + 
-  theme(plot.caption = element_markdown())
+  theme(plot.caption = element_markdown()) +
+  scale_color_brewer(type = "qual")
 ```
 
 ## Question 2
@@ -62,7 +63,8 @@ ggplot(capmetro_UT) +
        caption = "<b>Figure 2. A scatter plot showing the average boardings of Austin’s Capital Metro bus network at <br>different temperatures, grouped by weekend status, and faceted by the hour of the day.</b> Temperature <br>does not have a noticeable effect on the number of UT students riding the bus, considering the hour of the <br>day and weekend status as constants.") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown()) +
-  theme(axis.text.x = element_text(size = 6))
+  theme(axis.text.x = element_text(size = 6)) +
+  scale_color_brewer(type = "qual")
 ```
 
 \newpage
