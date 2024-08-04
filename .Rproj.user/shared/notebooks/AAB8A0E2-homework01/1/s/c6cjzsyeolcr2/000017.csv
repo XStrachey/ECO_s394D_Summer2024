@@ -1,5 +1,0 @@
-"0","summarize_profs_eval <- profs %>%"
-"0","  summarize(median = median(eval),"
-"0","            iqr = IQR(eval),"
-"0","            mode = mode(eval))"
-"0","# median=4 iqr=0.8"

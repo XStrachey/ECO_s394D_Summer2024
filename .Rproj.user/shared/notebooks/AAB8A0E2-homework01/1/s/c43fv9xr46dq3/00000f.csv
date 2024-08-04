@@ -1,4 +1,0 @@
-"0","table <- xtabs(~johnny.cash, data = plays_top50) %>%"
-"0","  prop.table() %>%"
-"0","  round(3) %>%"
-"0","  kable()"

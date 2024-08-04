@@ -1,8 +1,0 @@
-"0","cor_x <- profs$beauty"
-"0","cor_y <- profs$eval"
-"0",""
-"0","cor(cor_x, cor_y)"
-"1","[1]"
-"1"," 0.1890391"
-"1","
-"

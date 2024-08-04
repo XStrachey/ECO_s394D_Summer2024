@@ -1,3 +1,0 @@
-"0","ggplot(profs) +"
-"0","  geom_histogram(aes(x = eval)) +"
-"0","  facet_wrap(~gender, nrow = 2)"

@@ -1,7 +1,0 @@
-"0","avg_total_by_hr <- bikeshare %>%"
-"0","  group_by(hr, workingday) %>%"
-"0","  summarize(avg_total = mean(total))"
-"2","`summarise()` has grouped output by 'hr'. You can override using the `.groups` argument."
-"0","ggplot(avg_total_by_hr) +"
-"0","  geom_line(aes(x = hr, y = avg_total)) +"
-"0","  facet_wrap(~workingday, nrow = 2)"

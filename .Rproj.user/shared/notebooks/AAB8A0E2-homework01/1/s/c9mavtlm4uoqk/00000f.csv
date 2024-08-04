@@ -1,7 +1,0 @@
-"0","# make a 2x2 table"
-"0","xtabs(~daft.punk + david.bowie, data = plays_top50) %>%"
-"0","  # conditional on the levels of the david.bowie variable, the second variable."
-"0","  prop.table(margin = 2) %>%"
-"0","  # round the entries in the table to 3 decimal places."
-"0","  round(3) %>%"
-"0","  kable()"
