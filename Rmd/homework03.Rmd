@@ -54,7 +54,7 @@ ggplot() +
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
   ggtitle("CDF of Discrete Random Variable X") +
   labs(x = "x", y = expression(F[X](x)),
-       caption = "<b>Figure 1. The cumulative distribution function, or CDF, of a discrete random variable X is defined as:<br>X=2 with probability 0.1<br>X=3 with probability 0.1<br>X=8 with probability 0.8<br></b>") +
+       caption = "<b>Figure 1. The cumulative distribution function, or CDF, of a discrete random variable X is defined as:<br>X=2 with probability 0.1<br>X=3 with probability 0.1<br>X=5 with probability 0.8<br></b>") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -91,7 +91,7 @@ $F_Y(y)=P(Y\leq y)=P(X^2\leq y)=P(X\leq\sqrt y)=\begin{cases}0,\text{ for }y<0\\
 
 therefore, it is clear that:
 
-$\text{PDF}_Y=f_Y(y)=\frac{d}{dy}F_Y(y)=\begin{cases}0,\text{ for } x\leq0\\\frac{1}{2}y^{\frac{-1}{2}},\text{ for }0<x\leq1\\0,\text{ for }x>1\end{cases}$
+$\text{PDF}_Y=f_Y(y)=\frac{d}{dy}F_Y(y)=\frac{1}{2}y^{\frac{-1}{2}},\text{ for }0<y\leq1$
 
 ### iv. Compute $E(Y)$ and $var(Y)$ directly from the PDF
 
@@ -111,15 +111,73 @@ Therefore, $var(Y)=\frac{1}{5}-(\frac{1}{3})^2=\frac{4}{45}$
 
 For each standard normal random variable $Z_i$ picked from $Z_1$,...,$Z_d$ is said to follow $Z_i\sim N(0,1)$.
 
-It is clear that $E(Z_i)=0$ and $var(Z_i)=1$.
+$f(Z_i)=\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}}$
 
-Because the formula $var(Z_i)=E(Z_i^2)-(E(Z_i))^2$, we can find:
+$E(Z_i^2)=\int_{-\infty}^{+\infty}Z_i^2\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}}dZ_i$
+
+Because of 
+
+$(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})'=-Z_i(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})$,
+
+and 
+
+$(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})''=Z_i^2(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})-(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})$
+
+therefore, 
+
+$E(Z_i^2)=\int_{-\infty}^{+\infty}[(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})''+(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})]dZ_i$
+
+which is equal to:
+
+$E(Z_i^2)=\int_{-\infty}^{+\infty}(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})''dZ_i+\int_{-\infty}^{+\infty}(\frac{1}{\sqrt{2\pi}}e^{-\frac{Z_i^2}{2}})dZ_i$
+
+so,  
+
+$E(Z_i^2)=0+1=1$
+
+It also is clear that $E(Z_i)=0$ and $var(Z_i)=1$.
+
+Because the formula $var(Z_i)=E(Z_i^2)-(E(Z_i))^2$, we also can find:
 
 $E(Z_i^2)=var(Z_i)+(E(Z_i))^2=1+0^2=1$
 
 For $X\overset{D}{=}Z_1^2+\cdot\cdot\cdot+Z_d^2$, we can compute $E(X)$ as:
 
 $E(X)=E(Z_1^2)+\cdot\cdot\cdot+E(Z_d^2)=\underbrace{1+\cdot\cdot\cdot+1}_{d}=d$
+
+### Optional Practice Exercise
+
+Let's denote the PDF of standard normal distribution as $\phi(z)$.
+
+Because of  
+
+$\phi'(z)=-z\phi(z)$
+
+and
+
+$\phi''(z)=z^2\phi-\phi$
+
+and
+
+$\phi^{(3)}(z)=2z\phi(z)-z^3\phi+z\phi$
+
+and
+
+$\phi^{(4)}(z)=z^4\phi-6z^2\phi+3\phi$
+
+therefore,
+
+$E(Z_i^4)=\int_{-\infty}^{+\infty}Z_i^4\phi(Z_i)dZ_i=\int_{-\infty}^{+\infty}[\phi^{(4)}(Z_i)+6Z_i^2\phi(Z_i)-3\phi(Z_i)]dZ_i$
+
+which is equal to:
+
+$E(Z_i^4)=\int_{-\infty}^{+\infty}\phi^{(4)}(Z_i)dZ_i+6\int_{-\infty}^{+\infty}Z_i^2\phi(Z_i)dZ_i-3\int_{-\infty}^{+\infty}\phi(Z_i)dZ_i=0+6-3=3$
+
+So $var(Z_i^2)=E(Z_i^4)-(E(Z_i^2))^2=3-1^2=2$
+
+Since $X$ is the sum of the squares of $d$ independent standard normal random variables, the variance of $X$ is the sum of the variances of $Z_i^2$:
+
+$var(X)=\underbrace{var(Z_1^2)+\cdot\cdot\cdot+var(Z_d^2)}_{d}=2d$
 
 ## Part B
 
@@ -139,9 +197,9 @@ It is clear that $E(T)=0.28\neq\frac{2}{8}$, which implies that the calculation 
 
 $\because U\sim U(0,1)$
 
-$\therefore f_U(u)=\begin{cases}1,\text{ for }0\leq x\leq1\\0,\text{ otherwise}\end{cases}$
+$\therefore f_U(u)=\begin{cases}1,\text{ for }0\leq u\leq1\\0,\text{ otherwise}\end{cases}$
 
-$\therefore F_U(u)=\begin{cases}0,\text{ for }x<0,\\x,\text{ for }0\leq x\leq1\\1,\text{ for }x>1\end{cases}$
+$\therefore F_U(u)=\begin{cases}0,\text{ for }u<0,\\u,\text{ for }0\leq u\leq1\\1,\text{ for }u>1\end{cases}$
 
 $\because X=F^{-1}(U)$
 
@@ -232,7 +290,7 @@ ggplot(simulations) +
   scale_shape_manual(values = c("Simulated" = 4, "Theoretical" = 1)) +
   ggtitle("Comparison of Simulated and Theoretical Standard Deviation") +
   labs(x = "N", y = "Standard Deviation", shape = "Type",
-       caption = "<b>Figure 2. The plot shows comparison of Monte Carlo simulated and theoretical standard deviations.</b> <br>Through this figure, the Monte Carlo standard deviation of the simulation, which simulated 1000 realiza-<br>tions, agrees, at least approximately, with the theoretical standard deviation computed from the result in (A). <br>Besides, there is a pattern that the standard deviation decreases by the N increases, which demonstrates <br>that as the sample size increases, the mean of the observed values will gradually converge to the expected <br>probability. This is a verification of the Law of Large Numbers and the Central Limit Theorem.") +
+       caption = "<b>Figure 2. The plot shows comparison of Monte Carlo simulated and theoretical standard deviations.</b> <br>Through this figure, the Monte Carlo standard deviation of the simulation, which simulated 1000 realiza-<br>tions, agrees, at least approximately, with the theoretical standard deviation computed from the result in (A). <br>This is a verification of the Law of Large Numbers. Besides, there is a pattern that the standard deviation <br>decreases by the N increases, which demonstrates that as the sample size increases, the mean of the <br>observed values will gradually converge to the expected probability. This is a verification of the Central <br>Limit Theorem.") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -257,4 +315,4 @@ $F_{Y_N}(y)=\underbrace{(1-e^{-\lambda y})\times\cdot\cdot\cdot\times(1-e^{-\lam
 
 Therefore, the PDF of $Y_N$ for fixed $N$ is:
 
-$f_{Y_N}(y)=\frac{d}{dy}(1-e^{-\lambda y})^N=\lambda N(1-e^{-\lambda y})^{N-1}$
+$f_{Y_N}(y)=\frac{d}{dy}(1-e^{-\lambda y})^N=\lambda N(1-e^{-\lambda y})^{N-1}e^{-\lambda y}$
