@@ -1,0 +1,260 @@
+---
+title: "homework03"
+output: pdf_document
+date: "2024-07-30"
+author: "zhewei xie"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries, include = FALSE, echo=FALSE}
+# load libraries.
+library(tidyverse)
+library(knitr)
+library(ggtext)
+library(mosaic)
+```
+
+# Problem 1: CDFs and PDFs
+
+## Part A
+
+```{r problem1_a, echo=FALSE}
+values <- c(2, 3, 5)
+probabilities <- c(0.1, 0.1, 0.8)
+
+cdf <- data.frame(
+  x = values,
+  # use cusum to calculate cumulation
+  cdf_p = cumsum(probabilities)
+)
+
+x <- c(0, 2, 2, 3, 3, 5, 5, 8)
+y <- c(0, 0, 0.1, 0.1, 0.2, 0.2, 1, 1)
+
+line0 <- data.frame(x = c(0, 2), y = c(0, 0))
+line1 <- data.frame(x = c(2, 3), y = c(0.1, 0.1))
+line2 <- data.frame(x = c(3, 5), y = c(0.2, 0.2))
+line3 <- data.frame(x = c(5, 8), y = c(1, 1))
+
+ex_points <- data.frame(x = c(2, 3, 5), y = c(0, 0.1, 0.2))
+
+# plot(x, y, lwd = 3,frame = FALSE, type = "l")
+
+ggplot() +
+  geom_line(data = line0, aes(x = x, y = y)) +
+  geom_line(data = line1, aes(x = x, y = y)) +
+  geom_line(data = line2, aes(x = x, y = y)) +
+  geom_line(data = line3, aes(x = x, y = y)) +
+  geom_point(data = ex_points, aes(x = x, y = y), color = "black", shape = 21, fill = "white") +
+  geom_point(data = cdf, aes(x = x, y = cdf_p), color = "black") +
+  scale_x_continuous(breaks = 0:8) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+  ggtitle("CDF of Discrete Random Variable X") +
+  labs(x = "x", y = expression(F[X](x)),
+       caption = "<b>Figure 1. The cumulative distribution function, or CDF, of a discrete random variable X is defined as:<br>X=2 with probability 0.1<br>X=3 with probability 0.1<br>X=8 with probability 0.8<br></b>") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+Given the definition in the Part A, the CDF of X is:
+
+$\text{CDF}_X=P(X\leq x)=\begin{cases}0,\text{ for }x<2\\0.1,\text{ for }2\leq x<3\\0.2,\text{ for }3\leq x<5\\1,\text{ for }5\leq x\end{cases}$
+
+therefore, it is clear that:
+
+$P(2<X \leq 4.5)=P(X\leq4.5)-P(X\leq2)=0.2-0.1=0.1$
+
+$P(2 \leq X<4.5)=P(X<4.5)-P(X<2)=0.2-0=0.2$
+
+## Part B
+
+Given the definition in the Part B ($X\text{~}U(0,1)$), the CDF of X is:
+
+$\text{CDF}_X=P(X\leq x)=\begin{cases}0,\text{ for }x<0\\x,\text{ for }0\leq x\leq1\\1,\text{ for }x>1\end{cases}$
+
+### i. Compute $P(X2\leq0.25)$
+
+$P(X^2\leq0.25)=P(X\leq0.5)=0.5$
+
+### ii. For any number a, compute $P(X^2\leq a)$
+
+$P(X^2\leq a)=P(X\leq\sqrt a)=\begin{cases}0,\text{ for }a<0\\\sqrt a,\text{ for }0\leq a\leq1\\1,\text{ for }a>1\end{cases}$
+
+### iii. From (ii), find the PDF of the random variable $Y=X^2$
+
+From (ii), we have the CDF of $Y=X^2$:
+
+$F_Y(y)=P(Y\leq y)=P(X^2\leq y)=P(X\leq\sqrt y)=\begin{cases}0,\text{ for }y<0\\\sqrt y,\text{ for }0\leq y\leq1\\1,\text{ for }y>1\end{cases}$
+
+therefore, it is clear that:
+
+$\text{PDF}_Y=f_Y(y)=\frac{d}{dy}F_Y(y)=\begin{cases}0,\text{ for } x\leq0\\\frac{1}{2}y^{\frac{-1}{2}},\text{ for }0<x\leq1\\0,\text{ for }x>1\end{cases}$
+
+### iv. Compute $E(Y)$ and $var(Y)$ directly from the PDF
+
+Given (iii), it is clear that:
+
+$E(Y)=\int_{-\infty}^0y\cdot f_Y(y)dy+\int_0^1y\cdot f_Y(y)dy+\int_1^{+\infty}y\cdot f_Y(y)dy=0+\int_0^1\frac{1}{2}y^{\frac{1}{2}}dy+0=\frac{1}{3}$
+
+For $var(Y)$, given the formula $var(Y)=E(Y^2)-(E(Y))^2$, it is necessary to calculate $E(Y^2)$ firstly:
+
+$E(Y^2)=\int_{-\infty}^0y^2\cdot f_Y(y)dy+\int_0^1y^2\cdot f_Y(y)dy+\int_1^{+\infty}y^2\cdot f_Y(y)dy=0+\int_0^1\frac{1}{2}y^{\frac{3}{2}}dy+0=\frac{1}{5}$
+
+Therefore, $var(Y)=\frac{1}{5}-(\frac{1}{3})^2=\frac{4}{45}$
+
+# Problem 2: practice with expected value
+
+## Part A
+
+For each standard normal random variable $Z_i$ picked from $Z_1$,...,$Z_d$ is said to follow $Z_i\sim N(0,1)$.
+
+It is clear that $E(Z_i)=0$ and $var(Z_i)=1$.
+
+Because the formula $var(Z_i)=E(Z_i^2)-(E(Z_i))^2$, we can find:
+
+$E(Z_i^2)=var(Z_i)+(E(Z_i))^2=1+0^2=1$
+
+For $X\overset{D}{=}Z_1^2+\cdot\cdot\cdot+Z_d^2$, we can compute $E(X)$ as:
+
+$E(X)=E(Z_1^2)+\cdot\cdot\cdot+E(Z_d^2)=\underbrace{1+\cdot\cdot\cdot+1}_{d}=d$
+
+## Part B
+
+Given the situation that Markov faces, it is easily to calculate the expected time both by walk and by scooters:
+
+$T_{walk}=\frac{2}{5}$
+
+$T_{scooter}=\frac{2}{10}$
+
+Therefore, the expected time $T$ that it takes him to get to class on a random winter day is:
+
+$E(T)=T_{walk}\times0.4+T_{scooter}\times(1-0.4)=0.16+0.12=0.28$
+
+It is clear that $E(T)=0.28\neq\frac{2}{8}$, which implies that the calculation of Markov is wrong. The reason is $E(2/V)\neq2/E(V)$.
+
+# Problem 3: inverse CDF
+
+$\because U\sim U(0,1)$
+
+$\therefore f_U(u)=\begin{cases}1,\text{ for }0\leq x\leq1\\0,\text{ otherwise}\end{cases}$
+
+$\therefore F_U(u)=\begin{cases}0,\text{ for }x<0,\\x,\text{ for }0\leq x\leq1\\1,\text{ for }x>1\end{cases}$
+
+$\because X=F^{-1}(U)$
+
+$\therefore F_X(x)=P(F^{-1}(U)\leq x)$
+
+$\therefore F_X(x)=P(U\leq F(x))$
+
+$\therefore F_X(x)=F(x)$
+
+$\therefore f_X(x)=\frac{d}{dx}F_X(x)=\frac{d}{dx}F(x)=f(x)$
+
+# Problem 4: simulation
+
+## Part A
+
+$\because X_n\sim \text{Binominal}(N,P)$
+
+$\therefore E(X_N)=NP$ and $var(X_N)=NP(1-P)$
+
+Let $\hat pN=X_N/N$ denote the proportion of observed successes.
+
+Based on the formulas:
+
+$E(aX)=aE(X)$ and $var(aX)=a^2var(X)$
+
+it it clear that:
+
+$E(\hat p_N)=E(X_N/N)=\frac{1}{N}E(X_N)=\frac{1}{N}NP=P$
+
+$var(\hat p_N)=var(X_N/N)=(\frac{1}{N})^2var(X_N)=\frac{1}{N^2}NP(1-P)=\frac{P(1-P)}{N}$
+
+$\therefore sd(\hat p_N)=\sqrt{\frac{P(1-P)}{N}}$
+
+## Part B
+
+```{r problem4_b_1, echo=FALSE}
+S5 = do(1000)*{
+  X5 = rbinom(1, 5, 0.5)
+  P5 = X5 / 5
+}
+
+simulation <- data.frame(mean(S5$result) |> round(3), sd(S5$result) |> round(3))
+
+colnames(simulation) <- c("mean", "standard deviation")
+
+kable(simulation,
+      caption = "This is the result (rounded to 3 decimal places) of a Monte Carlo simulation of 1000 realizations of the random variable $\\hat{p}_5$, assuming that the true $P=0.5$.")
+```
+
+Based on the Part A, it is clear that:
+
+the theoretical mean is $E(\hat p_N)=P=0.5$
+
+and the theoretical standard deviation is $sd(\hat p_N)=\sqrt{\frac{P(1-P)}{N}}=\sqrt{\frac{0.5\times0.5}{5}}\approx0.2236$.
+
+Therefore, the Monte Carlo mean and standard deviation of the simulated $\hat p_5$'s agree, at least approximately, with the theoretical mean and standard deviation computed from the result in (A).
+
+```{r problem4_b_2, echo=FALSE}
+simulate_p_hat <- function(N) {
+  SN = do(1000)*{
+    XN = rbinom(1, N, 0.5)
+    PN = XN / N
+  }
+  
+  theorectical_sd <- sqrt(0.25/N)
+  
+  return(c(SN = SN, theorectical_sd = theorectical_sd))
+}
+
+S5 <- simulate_p_hat(5)
+S10 <- simulate_p_hat(10)
+S25 <- simulate_p_hat(25)
+S50 <- simulate_p_hat(50)
+S100 <- simulate_p_hat(100)
+
+N <- c(5, 10, 25, 50, 100)
+sd <- c(sd(S5$SN), sd(S10$SN), sd(S25$SN), 
+          sd(S50$SN), sd(S100$SN),
+        S5$theorectical_sd, S10$theorectical_sd, S25$theorectical_sd, 
+          S50$theorectical_sd, S100$theorectical_sd)
+isSim <- rep(c("Simulated", "Theoretical"), each = 5)
+
+simulations <- data.frame(N = N, sd = sd, isSim = isSim)
+
+ggplot(simulations) +
+  geom_point(aes(x = N, y = sd, shape = isSim)) +
+  scale_x_continuous(breaks = seq(0, 100, 5)) +
+  scale_shape_manual(values = c("Simulated" = 4, "Theoretical" = 1)) +
+  ggtitle("Comparison of Simulated and Theoretical Standard Deviation") +
+  labs(x = "N", y = "Standard Deviation", shape = "Type",
+       caption = "<b>Figure 2. The plot shows comparison of Monte Carlo simulated and theoretical standard deviations.</b> <br>Through this figure, the Monte Carlo standard deviation of the simulation, which simulated 1000 realiza-<br>tions, agrees, at least approximately, with the theoretical standard deviation computed from the result in (A). <br>Besides, there is a pattern that the standard deviation decreases by the N increases, which demonstrates <br>that as the sample size increases, the mean of the observed values will gradually converge to the expected <br>probability. This is a verification of the Law of Large Numbers and the Central Limit Theorem.") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+# Problem 5: more PDF/CDF practice
+
+For each standard normal random variable $X_i$ picked from $X_1,\cdot\cdot\cdot,X_N$ is said to follow $X_i\sim Exp(\lambda)$ for $x\geq0$, and $f(x)=0$ otherwise.
+
+So the cumulative distribution function of X is $F_X(x)=\int_0^x\lambda e^{-\lambda t}dt=1-e^{-\lambda x}$.
+
+Given $Y_N=\max\{X_1,\cdot\cdot\cdot,X_N\}$, it is clear that:
+
+$F_{Y_N}(y)=P(Y\leq y)=P(X_1\leq y,\cdot\cdot\cdot,X_N\leq y)$
+
+Because $X_1,\cdot\cdot\cdot,X_N$ are a set of $N$ independent samples, it implies that:
+
+$F_{Y_N}(y)=P(X_1\leq y)\times\cdot\cdot\cdot\times P(X_N\leq y)$
+
+Then,
+
+$F_{Y_N}(y)=\underbrace{(1-e^{-\lambda y})\times\cdot\cdot\cdot\times(1-e^{-\lambda x})}_{N}=(1-e^{-\lambda y})^N$
+
+Therefore, the PDF of $Y_N$ for fixed $N$ is:
+
+$f_{Y_N}(y)=\frac{d}{dy}(1-e^{-\lambda y})^N=\lambda N(1-e^{-\lambda y})^{N-1}$
