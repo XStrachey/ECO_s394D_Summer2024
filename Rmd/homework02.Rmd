@@ -330,7 +330,7 @@ Clearly, $P(A|B)\neq P(A|\overline B)\neq P(A)$.
 
 ## Part C
 
-Let's donate the event "Random clicker" as RC, the event "Truth clicker" as TC, the event "answer yes" as Y, the event "answer no" as N.  
+Let's denote the event "Random clicker" as RC, the event "Truth clicker" as TC, the event "answer yes" as Y, the event "answer no" as N.  
 
 $P(Y)=P(Y|RC)\cdot P(RC)+P(Y|TC)\cdot P(TC)$  
 
@@ -344,7 +344,7 @@ Therefore, $P(Y)=P(Y|RC)\cdot P(RC)+P(Y|TC)\cdot P(TC)=0.5\cdot0.3+P(Y|TC)\cdot0
 
 ## Part D
 
-Let's donate the event "someone has the disease" as D, the event "test positive" as TP.
+Let's denote the event "someone has the disease" as D, the event "test positive" as TP.
 
 Because someone has the disease, there is a probability of 0.993 that they will test positive, it is clear that $P(TP|D)=0.993$.  
 
@@ -360,7 +360,7 @@ According to Bayes’ theorem, $P(D|TP)=\frac{P(TP|D)\cdot P(D)}{P(TP)}=\frac{0.
 
 ## Part E
 
-Let's donate the event "an aircraft is present in a certain area" as A, the event "a radar correctly registers its presence" as R.  
+Let's denote the event "an aircraft is present in a certain area" as A, the event "a radar correctly registers its presence" as R.  
 
 $P(R|A)=0.99$  
 $P(R|\overline A)=0.10$  
