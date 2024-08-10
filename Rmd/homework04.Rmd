@@ -1,0 +1,343 @@
+---
+title: "homework04"
+output: pdf_document
+date: "2024-08-08"
+author: "zhewei xie"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library, include = FALSE, echo=FALSE}
+library(tidyverse)
+library(mosaic)
+library(knitr)
+library(ggtext)
+```
+
+# Problem 1: NBC pilot survey
+
+```{r problem1_data, echo=FALSE}
+nbc_pilotsurvey = read.csv("../data/raw data/nbc_pilotsurvey.csv", header = TRUE)
+```
+
+## Part A
+
+### Question
+
+Is there evidence that one show consistently makes people happier among viewers?
+
+### Approach
+
+I use both de Moivre’s equation as well as the “Pythagorean theorem” for the difference in sample means between “Living with Ed” and “My Name is Earl.” To apply the correct formulas, we need the sample mean, sample standard deviation, sample size in each group, and the difference between the two means. After applying the formula below, we could easily find out the 95% confidence interval for the difference in mean viewer response to the Q1_Happy question for these two shows.
+
+$se(\overline x_1 - \overline x_2)=\sqrt{\frac{\sigma_1^2}{N_1}+\frac{\sigma_2^2}{N_2}}$
+
+### Results
+
+```{r problem1_a, echo=FALSE}
+# Method 1: de Moivre
+
+subset_a <- nbc_pilotsurvey %>%
+  filter(Show == "Living with Ed" | Show == "My Name is Earl")
+
+subset_ed <- nbc_pilotsurvey %>%
+  filter(Show == "Living with Ed")
+
+subset_earl <- nbc_pilotsurvey %>%
+  filter(Show == "My Name is Earl")
+
+factor_a <- subset_a %>%
+  group_by(Show) %>%
+  summarize(xbar = mean(Q1_Happy),
+            sigma = sd(Q1_Happy),
+            n = n())
+
+dm <- diffmean(Q1_Happy ~ Show, data = subset_a)
+
+se <- ((factor_a$sigma[1]^2)/factor_a$n[1]+(factor_a$sigma[2]^2)/factor_a$n[2]) %>% sqrt()
+
+upper <- dm + 1.96 * se
+lower <- dm - 1.96 * se
+
+info_df <- data.frame(DiffMean = dm, StandardError = se, 
+                        Lower = lower, Upper = upper)
+
+colnames(info_df) <- c("Different Mean", "Standard Error", "Lower", "Upper")
+rownames(info_df) <- NULL
+
+kable(info_df,
+      caption = "The confidence intervals with a 95% confidence level for the difference in mean viewer response to the Q1_Happy question for the shows “Living with Ed” and “My Name is Earl.”")
+```
+
+### Conclusion
+
+**This 95% confidence interval contains zero, so we do not have a statistically significant difference in mean viewer response to the Q1_Happy question for these two shows.** Although the average rating for “Living with Ed” is slightly higher, the difference is not significant enough to rule out the possibility of chance.
+
+## Part B
+
+### Question
+
+Is there evidence that one show consistently makes people feel more annoyed among viewers?
+
+### Approach
+
+First, I stored the differences in the means of 10,000 bootstrapped samples from “The Biggest Loser” and “The Apprentice: Los Angeles.” Then, I ask for a confidence interval based on this bootstrapped sampling distribution.
+
+### Results
+
+```{r problem1_b, echo=FALSE}
+# Method 2: Using a bootstrapped confidence interval
+
+subset_b <- nbc_pilotsurvey %>%
+  filter(Show == "The Biggest Loser" | Show == "The Apprentice: Los Angeles")
+
+boot_diffmean = do(10000)*diffmean(Q1_Annoyed ~ Show, data = mosaic::resample(subset_b))
+info_df <- confint(boot_diffmean)
+
+info_df <- info_df[ , -1]
+rownames(info_df) <- NULL
+
+kable(info_df,
+      caption = "The confidence intervals with a 95% confidence level for the difference in mean viewer response to the Q1_Annoyed question for the shows “The Biggest Loser” and “The Apprentice: Los Angeles.”")
+
+ggplot(boot_diffmean) +
+  geom_histogram(aes(x = diffmean, y = after_stat(count)), binwidth = 0.01,
+                 fill = "cyan4", color = "white") +
+  geom_vline(xintercept = info_df$lower, color = "red", linewidth = 0.5) +
+  geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
+  ggtitle("The Distribution of Bootstrap Sampling") +
+  labs(x = "Difference of Mean", y = "Count",
+       caption = "<b>Figure 1. The distribution of 10,000 bootstrap sampling for the difference in mean viewer response to the Q1_Annoyed question for the shows “The Biggest Loser” and “The Apprentice: Los Angeles,” with a 95% confidence level verticle line.</b> The 2.5% confidence level is approximately -0.519, and the 97.5% confidence level is approximately -0.021.") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+### Conclusion
+
+**This 95% confidence interval doesn’t contain zero, so we have a statistically significant difference in mean viewer response to the Q1_Annoyed question for these two shows.** We have a 95% confidence to conclude that “The Apprentice: Los Angeles” made people feel more annoyed.
+
+## Part C
+
+### Question
+
+What proportion of American TV watchers would we expect to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing with the Stars.”
+
+### Approach
+
+First, I stored the proportions of American TV watchers who gives as response of 4 or greater to the “Q2_Confusing” question of 10,000 bootstrapped samples for the show “Dancing with the Stars.” Then, I ask for a confidence interval based on this bootstrapped sampling distribution.
+
+### Results
+
+```{r problem1_c, echo=FALSE}
+subset_c <- nbc_pilotsurvey %>%
+  filter(Show == "Dancing with the Stars")
+
+# Method 1: CLT
+# prop_confusing <- prop(~Q2_Confusing >= 4, data = subset_c)
+# sample_size <- nrow(subset_c)
+# se <- ((prop_confusing * (1 - prop_confusing)) / sample_size) %>% sqrt()
+# lower <- prop_confusing - 1.96 * se
+# upper <- prop_confusing + 1.96 * se
+# 
+# info_df <- data.frame(Prop = prop_confusing, StandardError = se,
+#                       Lower = lower, Upper = upper)
+# 
+# kable(info_df)
+
+# Method 2: Using a bootstrapped confidence interval
+boot_confusingprop <- do(10000)*prop(~Q2_Confusing >= 4, data = resample(subset_c))
+info_df <- confint(boot_confusingprop)
+
+info_df <- info_df[ , -1]
+rownames(info_df) <- NULL
+
+kable(info_df,
+      caption = "The confidence intervals with a 95% confidence level for the proportion of American TV watchers expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing with the Stars.”")
+
+ggplot(boot_confusingprop) +
+  geom_histogram(aes(x = prop_TRUE, y = after_stat(count)), binwidth = 0.01,
+                 fill = "cyan4", color = "white") +
+  geom_vline(xintercept = info_df$lower, color = "red", linewidth = 0.5) +
+  geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
+  ggtitle("The Distribution of Bootstrap Sampling") +
+  labs(x = "Proportion", y = "Count",
+       caption = "<b>Figure 2. The distribution of 10,000 bootstrap sampling for the proportion of American TV watchers expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing with the Stars,” with a 95% confidence level verticle line.</b> The 2.5% confidence level is approximately 0.039, and the 97.5% confidence level is approximately 0.116.") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+### Conclusion
+
+**I have a 95% confidence level to report that there is approximately 3.9% to 11.6% American TV watchers expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing with the Stars.”**
+
+# Problem 2: EBay
+
+## Question
+
+My task is to calculate the difference in revenue ratios between the treatment and control DMAs and provide a 95% confidence interval for this difference. These results will be used to evaluate whether the evidence supports the hypothesis that the revenue ratio is the same in the treatment and control groups, or if the data instead suggests that paid search advertising on Google generates additional revenue for eBay.
+
+## Approach
+
+First, I stored the differences in the means of 10,000 bootstrapped samples from the results of the experiment ran by EBay in May of 2013. Then, I ask for a confidence interval based on this bootstrapped sampling distribution.
+
+## Results
+
+```{r problem2, echo=FALSE}
+ebay <- read.csv("../data/raw data/ebay.csv", header = TRUE)
+
+boot_diffmean = do(10000)*diffmean(rev_ratio ~ adwords_pause, data = mosaic::resample(ebay))
+info_df <- confint(boot_diffmean)
+
+info_df <- info_df[ , -1]
+rownames(info_df) <- NULL
+
+factor_a <- ebay %>%
+  group_by(adwords_pause) %>%
+  summarize(xbar = mean(rev_ratio))
+
+kable(info_df,
+      caption = "The confidence intervals with a 95% confidence level for the difference in mean revenue ratio at the DMA level for eBay, i.e. the ratio of revenue after to revenue before for each DMA.")
+
+ggplot(boot_diffmean) +
+  geom_histogram(aes(x = diffmean, y = after_stat(count)), binwidth = 0.01,
+                 fill = "cyan4", color = "white") +
+  geom_vline(xintercept = info_df$lower, color = "red", linewidth = 0.5) +
+  geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
+  ggtitle("The Distribution of Bootstrap Sampling") +
+  labs(x = "Difference of Mean", y = "Count",
+       caption = "<b>Figure 3. The distribution of 10,000 bootstrap sampling for the difference in mean revenue ratio at the DMA level for eBay.</b> The 2.5% confidence level is approximately -0.090, and the 97.5% confidence level is approximately -0.014.") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+## Conclusion
+
+**This 95% confidence interval doesn’t contain zero, so we have a statistically significant difference in mean revenue ratio at the DMA level for eBay.** We have a 95% confidence to conclude that paid search advertising on Google generates additional revenue for eBay.
+
+# Problem 3 - Iron Bank
+
+Step 1: **Our null hypothesis is that the cluster of trades by the Iron Bank is as rare as the baseline probability of any legal trade being flagged by the SEC’s detection algorithm, which is 2.4%.**
+
+Step 2: **Our test statistic is the number of trades cases which are being flagged. Higher numbers of cases imply stronger evidence against the null hypothesis. In our data, 70 were flagged by the SEC’s detection algorithm of the last 2021 trades by Iron Bank employees.**
+
+Step 3: we must calculate the probability distribution of the test statistic, assuming that the null hypothesis is true. This distribution provides context for the observed data. It allows us to check if the observed data looks plausible under this distribution, or instead whether the null hypothesis looks too implausible to be believed. To do this, I repeated Monte Carlo simulation 100,000 times and store the result.
+
+```{r problem3, echo=FALSE}
+baseline_prob <- 0.024
+
+sim_flag <- do(100000)*nflip(n = 2021, prob = baseline_prob)
+
+p_value <- sum(sim_flag >= 70) / 100000
+```
+
+Let’s now visualize the distribution.
+
+```{r problem3_output, echo=FALSE}
+ggplot(sim_flag) + 
+  geom_histogram(aes(x = nflip), binwidth = 1, fill = "cyan4", color = "white") +
+  geom_vline(xintercept = 70, color = "red", linewidth = 0.5) +
+  geom_histogram(data = subset(sim_flag, nflip >= 70), 
+                 aes(x = nflip, y = after_stat(count)), binwidth = 1, 
+                 fill = "red", color = "white", alpha = 0.6) +
+  annotate("text", x = 60, y = 1000, 
+           label = paste("P(>= ", 70, " cases) = ", round(p_value, 4), sep = ""), 
+           hjust = 0) +
+  ggtitle("The Distribution of Bootstrap Sampling") +
+  labs(x = "Number of Flagged Trades", y = "Count",
+       caption = "<b>Figure 4. The distribution of 100,000 bootstrap sampling of the number of trades of the Iron Bank flagged by the SEC’s detection algorithm.</b>") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+Step 4: calculate a p-value. The number of simulations yielded 70 cases of trades or more is `r sum(sim_flag >= 70)` out of 100,000, or about `r p_value*100|>round(1)`%. **So our p-value is $p=$ `r p_value`.**
+
+Step 5: **Based on this p-value, we reached a conclusion that there is a 0.2% chance that the null hypothesis is right.**
+
+# Problem 4: milk demand, revisited
+
+```{r problem4, echo=FALSE}
+milk = read.csv("../data/raw data/milk.csv", header = TRUE)
+
+sample_size = nrow(milk)
+
+sim_elasticity <- do(10000)*lm(log(sales) ~ log(price), data = mosaic::resample(milk))
+
+ci <- quantile(sim_elasticity$log.price., probs = c(0.025, 0.975))
+
+ci[1]
+ci[2]
+
+ggplot(sim_elasticity) +
+  geom_histogram(aes(x = log.price., y = after_stat(count)), binwidth = 0.01,
+                 fill = "cyan4", color = "white") +
+  geom_vline(xintercept = ci[1], color = "red", linewidth = 0.5) +
+  geom_vline(xintercept = ci[2], color = "red", linewidth = 0.5) +
+  scale_x_continuous(breaks = seq(-1.9, -1.3, 0.1)) +
+  ggtitle("The Distribution of Bootstrap Sampling") +
+  labs(x = "Elasticity", y = "Count",
+       caption = "<b>Figure 5. The distribution of 10,000 boostrap sampling of the price elasticity of demand for milk.</b> The 95% bootstrap confidence interval for the elasticity is showed in the figure, with the 2.5% confidence level approximately at -1.77 and the 97.5% confidence level approximately at -1.46, both rounded to two decimal places.") +
+  theme(plot.caption = element_text(hjust = 0)) + 
+  theme(plot.caption = element_markdown())
+```
+
+# Problem 5: standard-error calculations
+
+## Part A
+
+First of all, there are some assumptions:
+
+$\because X_1,...,X_N\sim\text{Bernoulli}(p)\text{ and }Y_1,...,Y_M\sim\text{Bernoulli}(q)\text{ (all independent)}$
+
+$\because \hat p=\overline X_N \text{ and }\hat q=\overline Y_M$
+
+### Question i
+
+$\because E(\hat p)=E(\frac{\sum_{i=1}^NX_i}{N})\text{ and }E(\hat q)=E(\frac{\sum_{j=1}^MY_j}{M})$
+
+$\therefore E(\hat p-\hat q)=E(\hat p)-E(\hat q)=\frac{\sum_{i=1}^NE(X_i)}{N}-\frac{\sum_{j=1}^ME(Y_j)}{M}=p-q$
+
+### Question ii
+
+$\because var(\hat p)=var(\frac{\sum_{i=1}^NX_i}{N})=\frac{1}{N^2}var(\sum_{i=1}^NX_i)=\frac{1}{N^2}\sum_{i=1}^Nvar(X_i)$
+
+$\because var(X_i)=p(1-p)$
+
+$\therefore var(\hat p)=\frac{1}{N}p(1-p)$
+
+$\therefore \text{SE}(\hat p)=\sqrt{\frac{1}{N}p(1-p)}$
+
+### Question iii
+
+$\because var(\hat\Delta)=var(\hat p-\hat q)=var(\frac{\sum_{i=1}^NX_i}{N}+(-1)\times\frac{\sum_{j=1}^MY_j}{M})=\frac{1}{N^2}\sum_{i=1}^Nvar(X_i)+\frac{1}{M^2}\sum_{j=1}^Mvar(Y_j)$
+
+$\because var(X_i)=p(1-p)\text{ and }var(Y_j)=q(1-q)$
+
+$\therefore var(\hat\Delta)=\frac{1}{N}p(1-p)+\frac{1}{M}q(1-q)$
+
+$\therefore \text{SE}(\hat\Delta)=\sqrt{\frac{p(1-p)}{N}+\frac{q(1-q)}{M}}$
+
+## Part B
+
+First of all,
+
+$\overline X_N=\frac{1}{N}\sum_{i=1}^NX_i$
+
+$\overline Y_M=\frac{1}{M}\sum_{j=1}^MY_j$
+
+$\Delta=\mu_X-\mu_Y$
+
+$\hat\Delta=\overline X_N-\overline Y_M$
+
+### Expected value
+
+$\because E(\hat\Delta)=E(\overline X_N-\overline Y_M)=E(\frac{1}{N}\sum_{i=1}^NX_i-\frac{1}{M}\sum_{j=1}^MY_j)$
+
+$\therefore E(\hat\Delta)=\frac{1}{N}\sum_{i=1}^NE(X_i)-\frac{1}{M}\sum_{j=1}^ME(Y_j)=E(X_i)-E(Y_j)=\mu_X-\mu_Y=\Delta$
+
+### Standard error
+
+$\because var(\hat\Delta)=var(\overline X_N-\overline Y_M)=var(\frac{\sum_{i=1}^NX_i}{N}+(-1)\times\frac{\sum_{j=1}^MY_j}{M})=\frac{1}{N^2}\sum_{i=1}^Nvar(X_i)+\frac{1}{M^2}\sum_{j=1}^Mvar(Y_j)$
+
+$\therefore\text{SE}(\hat\Delta)=\sqrt{\frac{\sigma^2_X}{N}+\frac{\sigma^2_Y}{M}}$
