@@ -68,7 +68,7 @@ colnames(info_df) <- c("Different Mean", "Standard Error", "Lower", "Upper")
 rownames(info_df) <- NULL
 
 kable(info_df,
-      caption = "The confidence intervals with a 95% confidence level for the difference in mean viewer response to the Q1_Happy question for the shows “Living with Ed” and “My Name is Earl.”")
+      caption = "The confidence intervals with a 95% confidence level for the difference in mean viewer response to the Q1_Happy question for the shows “Living with Ed” and “My Name is Earl,” based on the de Moivre's equation and the Pythagorean theorem.")
 ```
 
 ### Conclusion
@@ -100,7 +100,7 @@ info_df <- info_df[ , -1]
 rownames(info_df) <- NULL
 
 kable(info_df,
-      caption = "The confidence intervals with a 95% confidence level for the difference in mean viewer response to the Q1_Annoyed question for the shows “The Biggest Loser” and “The Apprentice: Los Angeles.”")
+      caption = "The confidence intervals with a 95% confidence level for the difference in mean viewer response to the Q1_Annoyed question for the shows “The Biggest Loser” and “The Apprentice: Los Angeles,” based on 10,000 bootstrap sampling.")
 
 ggplot(boot_diffmean) +
   geom_histogram(aes(x = diffmean, y = after_stat(count)), binwidth = 0.01,
@@ -109,7 +109,7 @@ ggplot(boot_diffmean) +
   geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
   ggtitle("The Distribution of Bootstrap Sampling") +
   labs(x = "Difference of Mean", y = "Count",
-       caption = "<b>Figure 1. The distribution of 10,000 bootstrap sampling for the difference in mean viewer response to the Q1_Annoyed question for the shows “The Biggest Loser” and “The Apprentice: Los Angeles,” with a 95% confidence level verticle line.</b> The 2.5% confidence level is approximately -0.519, and the 97.5% confidence level is approximately -0.021.") +
+       caption = "<b>Figure 1. The distribution of 10,000 bootstrap sampling for the difference in mean viewer response <br>to the “Q1_Annoyed” question for the shows “The Biggest Loser” and “The Apprentice: Los <br>Angeles,” with a 95% confidence level verticle line.</b> The 2.5% confidence level is approximately -0.519, <br>and the 97.5% confidence level is approximately -0.021.") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -154,7 +154,7 @@ info_df <- info_df[ , -1]
 rownames(info_df) <- NULL
 
 kable(info_df,
-      caption = "The confidence intervals with a 95% confidence level for the proportion of American TV watchers expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing with the Stars.”")
+      caption = "The confidence intervals with a 95% confidence level for the proportion of American TV watchers expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing with the Stars,” based on 10,000 bootstrap sampling.")
 
 ggplot(boot_confusingprop) +
   geom_histogram(aes(x = prop_TRUE, y = after_stat(count)), binwidth = 0.01,
@@ -163,7 +163,7 @@ ggplot(boot_confusingprop) +
   geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
   ggtitle("The Distribution of Bootstrap Sampling") +
   labs(x = "Proportion", y = "Count",
-       caption = "<b>Figure 2. The distribution of 10,000 bootstrap sampling for the proportion of American TV watchers expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing with the Stars,” with a 95% confidence level verticle line.</b> The 2.5% confidence level is approximately 0.039, and the 97.5% confidence level is approximately 0.116.") +
+       caption = "<b>Figure 2. The distribution of 10,000 bootstrap sampling for the proportion of American TV watchers <br>expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing <br>with the Stars,” with a 95% confidence level verticle line.</b> The 2.5% confidence level is approximately <br>0.039, and the 97.5% confidence level is approximately 0.116.") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -198,7 +198,7 @@ factor_a <- ebay %>%
   summarize(xbar = mean(rev_ratio))
 
 kable(info_df,
-      caption = "The confidence intervals with a 95% confidence level for the difference in mean revenue ratio at the DMA level for eBay, i.e. the ratio of revenue after to revenue before for each DMA.")
+      caption = "The confidence intervals with a 95% confidence level for the difference in mean revenue ratio at the DMA level for eBay, i.e. the ratio of revenue after to revenue before for each DMA, based on 10,000 bootstrap samling.")
 
 ggplot(boot_diffmean) +
   geom_histogram(aes(x = diffmean, y = after_stat(count)), binwidth = 0.01,
@@ -207,7 +207,7 @@ ggplot(boot_diffmean) +
   geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
   ggtitle("The Distribution of Bootstrap Sampling") +
   labs(x = "Difference of Mean", y = "Count",
-       caption = "<b>Figure 3. The distribution of 10,000 bootstrap sampling for the difference in mean revenue ratio at the DMA level for eBay.</b> The 2.5% confidence level is approximately -0.090, and the 97.5% confidence level is approximately -0.014.") +
+       caption = "<b>Figure 3. The distribution of 10,000 bootstrap sampling for the difference in mean revenue ratio at <br>the DMA level for eBay.</b> The 2.5% confidence level is approximately -0.090, and the 97.5% confidence <br>level is approximately -0.014.") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -246,7 +246,7 @@ ggplot(sim_flag) +
            hjust = 0) +
   ggtitle("The Distribution of Bootstrap Sampling") +
   labs(x = "Number of Flagged Trades", y = "Count",
-       caption = "<b>Figure 4. The distribution of 100,000 bootstrap sampling of the number of trades of the Iron Bank flagged by the SEC’s detection algorithm.</b>") +
+       caption = "<b>Figure 4. The distribution of 100,000 bootstrap sampling of the number of trades of the Iron Bank <br>flagged by the SEC’s detection algorithm.</b>") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -266,8 +266,8 @@ sim_elasticity <- do(10000)*lm(log(sales) ~ log(price), data = mosaic::resample(
 
 ci <- quantile(sim_elasticity$log.price., probs = c(0.025, 0.975))
 
-ci[1]
-ci[2]
+# ci[1]
+# ci[2]
 
 ggplot(sim_elasticity) +
   geom_histogram(aes(x = log.price., y = after_stat(count)), binwidth = 0.01,
@@ -277,7 +277,7 @@ ggplot(sim_elasticity) +
   scale_x_continuous(breaks = seq(-1.9, -1.3, 0.1)) +
   ggtitle("The Distribution of Bootstrap Sampling") +
   labs(x = "Elasticity", y = "Count",
-       caption = "<b>Figure 5. The distribution of 10,000 boostrap sampling of the price elasticity of demand for milk.</b> The 95% bootstrap confidence interval for the elasticity is showed in the figure, with the 2.5% confidence level approximately at -1.77 and the 97.5% confidence level approximately at -1.46, both rounded to two decimal places.") +
+       caption = "<b>Figure 5. The distribution of 10,000 boostrap sampling of the price elasticity of demand for milk.</b> The <br>95% bootstrap confidence interval for the elasticity is showed in the figure, with the 2.5% confidence level <br>approximately at -1.77 and the 97.5% confidence level approximately at -1.45, both rounded to two decimal <br>places. Therefore, for a confidence interval of 95%, the price elasticity of demand for milk (calculated as <br>log(sales)~log(price)) is approximately from -1.45 to -1.78.") +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -306,7 +306,7 @@ $\because var(X_i)=p(1-p)$
 
 $\therefore var(\hat p)=\frac{1}{N}p(1-p)$
 
-$\therefore \text{SE}(\hat p)=\sqrt{\frac{1}{N}p(1-p)}$
+$\therefore \text{SE}(\hat p)=\sqrt{\frac{p(1-p)}{N}}$
 
 ### Question iii
 
@@ -329,6 +329,8 @@ $\overline Y_M=\frac{1}{M}\sum_{j=1}^MY_j$
 $\Delta=\mu_X-\mu_Y$
 
 $\hat\Delta=\overline X_N-\overline Y_M$
+
+$\text{Assume }X\perp Y$
 
 ### Expected value
 
