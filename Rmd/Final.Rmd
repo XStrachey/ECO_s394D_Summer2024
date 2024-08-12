@@ -1121,13 +1121,65 @@ The average fire loss across all the households is the same as each individual h
 
 That’s the LLN in action: the “expected value” for an individual household is the average of the actual outcomes experienced across many diﬀerent households.
 
+# Chebyshev's inequality
+
+## Markov's inequality
+
+Let $Y_t=\begin{cases}0,\text{ if }x<t\\t,\text{ if }x\geq t\end{cases}$
+
+Therefore,
+
+$E(Y_t)\leq E(X)$
+
+That's because:
+
+$0\times P(X<t)+t\times P(X\geq t)\leq E(X)$
+
+So,
+
+$t\times P(X\geq t)\leq E(X)$
+
+$\therefore P(X\geq t)\leq\frac{E(X)}{t}$
+
+## Chebyshev's inequality
+
+For $|x-\mu|\geq t$
+
+$P(|x-\mu|\geq t)=P([x-\mu]^2\geq t^2)$
+
+Given Markov's inequality, then:
+
+$P([x-\mu]^2\geq t^2)\leq\frac{E([x-\mu]^2)}{t^2}$
+
+$P(|x-\mu|\geq t)\leq\frac{\sigma^2}{t^2}$
+
 # The Law of Large Numbers (LLN)
+
+**Convergence in probability.**
+
+It says that the mean of a large sample is close to the expected value of the distribution from which the sample is drawn:
+
+$\overline {X}_N\overset{P}{\to}\mu$
 
 Suppose $X_1,X_2,...X_N$ are all random variables with expected value $\mu$.
 
 Let $\overline{X}_N$ be the mean of these $N$ numbers.
 
 The Law of Large Numbers says that as $N$ gets large, $\overline{X}_N$ becomes very close to $\mu$.
+
+# Central Limit Theorem
+
+Suppose that $X_1,...,X_N$ are IID random variables with mean $\mu$ and variance $\sigma^2$.
+
+Let $\overline X_N$ be the sample mean.
+
+Now define $Z_N$ as the z-score of the sample mean:
+
+$Z_n=\frac{\overline X_n-\mu}{sd(\overline X_n)}=\frac{\overline X_n-\mu}{\sqrt{var(\overline X_n)}}=\frac{\overline X_n-\mu}{\sqrt{\frac{\sigma^2}{N}}}=\frac{\sqrt{N}(\overline X_n-\mu)}{\sigma}$
+
+So, for all $n\in[1,N]$, there is:
+
+$Z_n=\frac{\sqrt{N}(\overline X_n-\mu)}{\sigma}\sim N(0,1)$
 
 # Code 1
 
