@@ -109,7 +109,7 @@ ggplot(boot_diffmean) +
   geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
   ggtitle("The Distribution of Bootstrap Sampling") +
   labs(x = "Difference of Mean", y = "Count",
-       caption = "<b>Figure 1. The distribution of 10,000 bootstrap sampling for the difference in mean viewer response <br>to the “Q1_Annoyed” question for the shows “The Biggest Loser” and “The Apprentice: Los <br>Angeles,” with a 95% confidence level verticle line.</b> The 2.5% confidence level is approximately -0.519, <br>and the 97.5% confidence level is approximately -0.021.") +
+       caption = sprintf("<b>Figure 1. The distribution of 10,000 bootstrap sampling for the difference in mean viewer response <br>to the “Q1_Annoyed” question for the shows “The Biggest Loser” and “The Apprentice: Los <br>Angeles,” with a 95%% confidence level verticle line.</b> The 2.5%% confidence level is approximately %.3f, <br>and the 97.5%% confidence level is approximately %.3f.", info_df$lower, info_df$upper)) +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -163,7 +163,7 @@ ggplot(boot_confusingprop) +
   geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
   ggtitle("The Distribution of Bootstrap Sampling") +
   labs(x = "Proportion", y = "Count",
-       caption = "<b>Figure 2. The distribution of 10,000 bootstrap sampling for the proportion of American TV watchers <br>expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing <br>with the Stars,” with a 95% confidence level verticle line.</b> The 2.5% confidence level is approximately <br>0.039, and the 97.5% confidence level is approximately 0.116.") +
+       caption = sprintf("<b>Figure 2. The distribution of 10,000 bootstrap sampling for the proportion of American TV watchers <br>expected to give a response of 4 or greater to the “Q2_Confusing” question for the show “Dancing <br>with the Stars,” with a 95%% confidence level verticle line.</b> The 2.5%% confidence level is approximately <br>%.3f, and the 97.5%% confidence level is approximately %.3f.", info_df$lower, info_df$upper)) +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -207,7 +207,7 @@ ggplot(boot_diffmean) +
   geom_vline(xintercept = info_df$upper, color = "red", linewidth = 0.5) +
   ggtitle("The Distribution of Bootstrap Sampling") +
   labs(x = "Difference of Mean", y = "Count",
-       caption = "<b>Figure 3. The distribution of 10,000 bootstrap sampling for the difference in mean revenue ratio at <br>the DMA level for eBay.</b> The 2.5% confidence level is approximately -0.090, and the 97.5% confidence <br>level is approximately -0.014.") +
+       caption = sprintf("<b>Figure 3. The distribution of 10,000 bootstrap sampling for the difference in mean revenue ratio at <br>the DMA level for eBay.</b> The 2.5%% confidence level is approximately %.3f, and the 97.5%% confidence <br>level is approximately %.3f.", info_df$lower, info_df$upper)) +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
@@ -266,8 +266,8 @@ sim_elasticity <- do(10000)*lm(log(sales) ~ log(price), data = mosaic::resample(
 
 ci <- quantile(sim_elasticity$log.price., probs = c(0.025, 0.975))
 
-# ci[1]
-# ci[2]
+ci_lower <- ci[1]
+ci_upper <- ci[2]
 
 ggplot(sim_elasticity) +
   geom_histogram(aes(x = log.price., y = after_stat(count)), binwidth = 0.01,
@@ -278,7 +278,7 @@ ggplot(sim_elasticity) +
   ggtitle("The Distribution of Bootstrap Sampling",
           subtitle = "Elasticity is a power law model.") +
   labs(x = "Elasticity (on a log-log scale)", y = "Count",
-       caption = "<b>Figure 5. The distribution of 10,000 boostrap sampling of the price elasticity of demand for milk.</b> The <br>95% bootstrap confidence interval for the elasticity is showed in the figure, with the 2.5% confidence level <br>approximately at -1.77 and the 97.5% confidence level approximately at -1.45, both rounded to two decimal <br>places. Therefore, for a confidence interval of 95%, the price elasticity of demand for milk (calculated as <br>log(sales)~log(price)) is approximately from -1.45 to -1.78.") +
+       caption = sprintf("<b>Figure 5. The distribution of 10,000 boostrap sampling of the price elasticity of demand for milk.</b> The <br>95%% bootstrap confidence interval for the elasticity is showed in the figure, with the 2.5%% confidence level <br>approximately at %.2f and the 97.5%% confidence level approximately at %.2f, both rounded to two decimal <br>places. Therefore, for a confidence interval of 95%%, the price elasticity of demand for milk (calculated as <br>log(sales)~log(price)) is approximately from %.2f to %.2f.", ci_lower, ci_upper, ci_lower, ci_upper)) +
   theme(plot.caption = element_text(hjust = 0)) + 
   theme(plot.caption = element_markdown())
 ```
