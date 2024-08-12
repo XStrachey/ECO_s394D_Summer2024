@@ -421,6 +421,8 @@ $E(X)=\mu$
 
 $var(X)=\sigma^2$
 
+$P(X\leq x)=P(\frac{X-\mu}{\sigma}\leq\frac{x-\mu}{\sigma})=P(Y\leq\frac{x-\mu}{\sigma})=\Phi(\frac{x-\mu}{\sigma})$
+
 ### Exponential Distribution
 
 For $x>0$,
@@ -487,7 +489,37 @@ $\therefore \sum f(k)=e^{-\lambda}\times e^\lambda=1$
 
 ## Theorems
 
-$F(x)=\int f(x)dx$
+### PMF
+
+#### Conditional PMFs
+
+$p_{X|A}(x)=P(X=x|A)$
+
+**For joint:**
+
+$p_{X|Y}(x,y)=p_Y(y)p_{X|Y}(x|y)$
+
+**For marginal:**
+
+$p_X(x)=\sum_yp_Y(y)p_{X|Y}(x|y)$
+
+### CDF
+
+**For discrete:**
+
+$F_X(x)=P(X\leq x)$
+
+**For continuous:**
+
+$F(x)=\int_{-\infty}^x f(x)dx$
+
+### PDF
+
+**For discrete:**
+
+$p_X(k)=P(X\leq k)-P(X<k)$
+
+**For continuous:**
 
 $f(x)=F'(x)$
 
@@ -707,7 +739,7 @@ $f_{Y_N}(y)=\frac{d}{dy}(1-e^{-\lambda y})^N=\lambda N(1-e^{-\lambda y})^{N-1}e^
 
 **For discrete:** $E(X)=\sum_{i=1}^nP(X=x_i)x_i$
 
-**For continuous:** $E(X)=\int_{-\infty}^{+\infty}xf(x)dx$
+**For continuous:** $E(X)=\int_{-\infty}^{+\infty}xf_X(x)dx$ and $E[g(X)]=\int_{-\infty}^{+\infty}g(x)f_X(x)dx$
 
 $E(X_1+X_2+...+X_n)=E(X_1)+E(X_2)+...+E(X_n)$
 
@@ -721,11 +753,17 @@ $E[g(x)]=\int_{-\infty}^{+\infty}g(x)f(x)dx$
 
 #### Conditional Expectation
 
+$E[g(X)|A] = \sum_x g(x)p_{X|A}(x|A)$
+
+$E[X]=\sum_y p_Y (y)E[X | Y = y]$ (total expectation theorem)
+
 $E(X|Y=y)=\int_{-\infty}^{+\infty}xf(x|y)dx$
 
-$E(X|Y=y)$ is a function of $y$, named as the regression function of $X$ by $Y$.
+$E[X | Y = y]$ is a number, whose value depends on $y$.
 
-$E(X)=E[E(X|Y)]$
+$E[X | Y ]$ is a function of the random variable $Y$, hence a random variable. Its experimental value is $E[X | Y = y]$ whenever the experimental value of $Y$ is $y$.
+
+$E(X)=E[E(X|Y)]$ (law of iterated expectations)
 
 ### Variance
 
@@ -733,7 +771,7 @@ $var(X)=E[(X-E[X])^2]$
 
 **For discrete:** $var(X)=\sum_{i=1}^nP(X=x_i)(x_i-\mu)^2$
 
-**For continuous:** $var(X)=\int_{-\infty}^{+\infty}f(x)[x-E(X)]^2dx$
+**For continuous:** $var(X)=\int_{-\infty}^{+\infty}f_X(x)[x-E(X)]^2dx$
 
 $var(X)=E(X^2)-[E(X)]^2\geq0$
 
@@ -1093,7 +1131,7 @@ The Law of Large Numbers says that as $N$ gets large, $\overline{X}_N$ becomes v
 
 # Code 1
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # Generating Random Variables
 
 # Uniform distribution
@@ -1112,7 +1150,7 @@ rexp(n = 10, rate = 1)
 
 # Code 2
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # PDF/PMF Function
 
 # PDF of Uniform distribution
@@ -1132,7 +1170,7 @@ dexp(x = 10, rate = 1)
 
 # Code 3
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # CDF Function
 
 # CDF of Uniform distribution
@@ -1155,7 +1193,7 @@ pexp(q = 2, rate = 1)
 titanic = read.csv("../data/raw data/titanic.csv", header = TRUE)
 ```
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # Summary and Wrangling
 
 # to calculate summary statistics
@@ -1186,7 +1224,7 @@ ebola = read.csv("../data/raw data/ebola.csv", header=TRUE)
 milk = read.csv("../data/raw data/milk.csv", header = TRUE)
 ```
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # Linear Model, Example: Heart rate vs. age
 # Type of change: Additive
 lm_heartrate = lm(hrmax ~ age, data=heartrate)
@@ -1207,7 +1245,7 @@ coef(lm1)
 
 # Code 6
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # Estimating a mean
 do(10000)*mean(~age, data=resample(titanic))
 # Estimating a proportion
@@ -1222,7 +1260,7 @@ do(10000)*lm(age~sex, data=resample(titanic))
 
 # Code 7
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # Simulate lots of games between Arsenal and Man City
 # under a very simple Poisson model.
 # the rates are chosen from average goal-scoring rates last season.
@@ -1249,7 +1287,7 @@ dpois(0, 1.45) * dpois(2, 2.18) # Arsenal 0 - 2 Man City
 
 # Code 8
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # Data on annual returns of stocks, bonds, and savings account
 annual_returns = read.csv("../data/raw data/annual_returns_since1928.csv")
 
@@ -1328,7 +1366,7 @@ lines(1:Horizon, sim1[2,], col='blue')
 
 # Code 9
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # simple computations with the normal distribution
 # rnorm: simulating random normal variables
 # pnorm: calculating tail areas under the normal distribution
@@ -1367,7 +1405,7 @@ pnorm(0.3, ReturnAvg, ReturnSD)
 
 # Code 10
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # Let's simulate three years of growth in a portfolio
 # that earns 6% interest with zero risk.
 # We start with some initial wealth
@@ -1476,7 +1514,7 @@ favstats(~result, data=sim1) %>% round(0)
 
 # Code 11
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # simulate from the normal random walk model:
 # y_t = y_{t-1} + e_t, where e_t is N(0, sigma)
 
@@ -1612,11 +1650,11 @@ AAPL_intraday %>%
 
 # Code 12
 
-```{r results='hide', warning=FALSE, echo=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE, echo=FALSE}
 NHANES_sleep = read.csv("../data/raw data/NHANES_sleep.csv", header = TRUE)
 ```
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # load NHANES_sleep.csv data
 # Make sure to check for a header row!
 
@@ -1712,7 +1750,7 @@ confint(boot_smoking, level=0.95)
 
 # Code 13
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 # In a 25-game stretch of the 2014-15 NFL seasons,
 # the New England Patriots won 19 coin tosses, for a
 # winning percentage of 76%. The Patriots have a
@@ -1751,7 +1789,7 @@ sum(dbinom(19:25, 25, 0.5))
 
 # Code 14
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 ###
 # Part 1: what happens when N gets bigger?
 ###
@@ -1852,7 +1890,7 @@ p1 + stat_function(fun = mydens, col='blue', size=2)
 
 # Code 15
 
-```{r results='hide', warning=FALSE}
+```{r results='hide', warning=FALSE, message=FALSE}
 mean(~SleepHrsNight, data=NHANES_sleep)
 
 # de Moivre's equation
