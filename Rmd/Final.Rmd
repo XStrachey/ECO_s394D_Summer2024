@@ -625,9 +625,9 @@ $P(2 \leq X<4.5)=P(X<4.5)-P(X<2)=0.2-0=0.2$
 
 Let X be a (continuous) uniform random variable on [0,1].
 
-i.  Compute $P(X2\leq0.25)$.
+i.  Compute $P(X^2\leq0.25)$.
 
-ii. For any number a, compute $P(X2\leq a)$.
+ii. For any number a, compute $P(X^2\leq a)$.
 
 iii. From (ii), find the PDF of the random variable $Y= X^2$.
 
@@ -1079,15 +1079,15 @@ The log of $Y_t$ is a linear function of the time variable ($t$).
 
 Exponential = linear on a log scale. To diagnose whether an exponential model makes sense, plot log(y) vs. t and check whether the relationship looks linear.
 
-# Example 8
+## Example 8
 
-## Question
+### Question
 
 - There are 140 million housing units in the US, and roughly 388,000 had a fire last year. So on average, $P(fire) = 388,000/140,000,000\approx0.00063$
 
 - Suppose you own a house worth $320,000. Would you pay $30 to insure it against fire?
 
-## Solution
+### Solution
 
 - There are 140 million housing units in the US, and roughly 388,000 had a fire last year. So on average, $P(fire) = 388,000/140,000,000\approx0.00063$
 
@@ -1105,7 +1105,7 @@ You lose $30, guaranteed—but no longer have the risk of a $320,000 loss.
 
 The diﬀerence ($10) is the premium you’d be paying in order to convert the $20 expected loss into a $30 guaranteed loss that won’t bankrupt you.
 
-## Question
+### Question
 
 - Suppose each house is worth $320,000, and you have 100,000 clients that all buy insurance.
 
@@ -1167,6 +1167,12 @@ Let $\overline{X}_N$ be the mean of these $N$ numbers.
 
 The Law of Large Numbers says that as $N$ gets large, $\overline{X}_N$ becomes very close to $\mu$.
 
+# de Moivre’s equation
+
+$\text{Variability of an average}=\frac{\text{Variability of a single data point}}{\sqrt{\text{Sample size}}}$
+
+$\text{Standard error of the mean}=\frac{\sigma}{\sqrt{N}}$
+
 # Central Limit Theorem
 
 Suppose that $X_1,...,X_N$ are IID random variables with mean $\mu$ and variance $\sigma^2$.
@@ -1180,6 +1186,10 @@ $Z_n=\frac{\overline X_n-\mu}{sd(\overline X_n)}=\frac{\overline X_n-\mu}{\sqrt{
 So, for all $n\in[1,N]$, there is:
 
 $Z_n=\frac{\sqrt{N}(\overline X_n-\mu)}{\sigma}\sim N(0,1)$
+
+# de Moivre's equation and CLT
+
+$\theta\in\hat\theta±z\cdot se(\hat\theta)$
 
 # Code 1
 
@@ -1303,9 +1313,9 @@ do(10000)*mean(~age, data=resample(titanic))
 # Estimating a proportion
 do(10000)*prop(~age, data=resample(titanic))
 # Comparing two means
-do(10000)*mean(age~sex, data=resample(titanic))
+do(10000)*diffmean(age~sex, data=resample(titanic))
 # Comparing two proportions
-do(10000)*prop(age~sex, data=resample(titanic))
+do(10000)*diffprop(age~sex, data=resample(titanic))
 # Regression model
 do(10000)*lm(age~sex, data=resample(titanic))
 ```
